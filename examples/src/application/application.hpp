@@ -14,6 +14,11 @@ class Application {
     std::vector<std::unique_ptr<IRelation>> relations;
     Multiplexer static_multiplexer;
     Multiplexer dynamic_multiplexer;
+    
+    Stopwatch snapshot_timer;
+    Stopwatch update_timer;
+    long snapshot_time = 0;
+    long update_time = 0;
 
     void init_relations();
 
@@ -51,7 +56,7 @@ class Application {
         clear_dispatchers();
     }
 
-    void run(size_t num_of_runs, bool output_result);
+    void run(size_t num_of_runs, bool output_result, size_t num_of_snapshots);
 };
 
 void Application::load_relations() {
@@ -108,16 +113,26 @@ void Application::process_streams_snapshot(dbtoaster::data_t& data, long snapsho
     long next_snapshot = 0;
 
     while (dynamic_multiplexer.has_next()) {
+        update_timer.restart();
         dynamic_multiplexer.next();
+        update_timer.stop();
+        update_time += update_timer.elapsedTimeInMilliSeconds();
 
         if (data.tN >= next_snapshot) {
+            snapshot_timer.restart(); 
             on_snapshot(data);
+            snapshot_timer.stop();
+            snapshot_time += snapshot_timer.elapsedTimeInMilliSeconds();
+
             next_snapshot = data.tN + snapshot_interval;
         }
     }
 
     if (next_snapshot != data.tN + snapshot_interval) {
+        snapshot_timer.restart(); 
         on_snapshot(data);
+        snapshot_timer.stop();
+        snapshot_time += snapshot_timer.elapsedTimeInMilliSeconds();
     }
 }
 
@@ -127,7 +142,7 @@ void Application::process_streams_no_snapshot(dbtoaster::data_t& data) {
     }
 }
 
-void Application::run(size_t num_of_runs, bool print_result) {
+void Application::run(size_t num_of_runs, bool print_result, size_t num_of_snapshots) {
     std::cout << "-------------" << std::endl;
 
     init_relations();
@@ -139,11 +154,24 @@ void Application::run(size_t num_of_runs, bool print_result) {
     load_relations();
     local_time.stop();
     std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
+    long total_num_of_tuples = 0;
     for (auto &r : relations) {
+        total_num_of_tuples += r->size();
         std::cout << "  " << r->get_name() << " (" << r->size() << ") " << std::endl;
     }
+    
+    // compute snapshot interval
+    long snapshot_interval = num_of_snapshots > 0 ? total_num_of_tuples / num_of_snapshots : total_num_of_tuples;
+    std::cout << "Total number of tuples: " << total_num_of_tuples << std::endl;
+    std::cout << "Snapshot interval: " << snapshot_interval << std::endl;
+    
+    
+    
 
     for (size_t run = 0; run < num_of_runs; run++) {
+        
+        snapshot_time = 0;
+        update_time = 0;
 
         dbtoaster::data_t data;
 
@@ -173,7 +201,7 @@ void Application::run(size_t num_of_runs, bool print_result) {
 
         std::cout << "4. Processing streams... " << std::flush;;
         local_time.restart();
-        process_streams(data);
+        process_streams_snapshot(data, snapshot_interval);
         local_time.stop();
         std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
 
@@ -184,6 +212,10 @@ void Application::run(size_t num_of_runs, bool print_result) {
         std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
 
         total_time.stop();
+        
+        std::cout << "Total snapshot time: " << snapshot_time << std::endl;
+        std::cout << "Total update time: " << update_time << std::endl;
+        
 
         std::cout << "    Run: " << run
                   << "    Processed: " << data.tN

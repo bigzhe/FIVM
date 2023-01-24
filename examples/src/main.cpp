@@ -5,10 +5,15 @@
 int main(int argc, char** argv) {
     
     int opt_num_runs = 1;
+    int opt_num_snapshots = 1;
     bool opt_print_result = true;
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "--num-runs") == 0 || strcmp(argv[i], "-r") == 0) {
             opt_num_runs = atoi(argv[i + 1]);
+        }
+        // snapshot interval
+        if (strcmp(argv[i], "--num-snapshots") == 0 || strcmp(argv[i], "-s") == 0) {
+            opt_num_snapshots = atoi(argv[i + 1]);
         }
         opt_print_result = opt_print_result && (strcmp(argv[i], "--no-output") != 0);
     }
@@ -21,7 +26,7 @@ int main(int argc, char** argv) {
 #endif
 
     Application app;
-    app.run(opt_num_runs, opt_print_result);
+    app.run(opt_num_runs, opt_print_result, opt_num_snapshots);
     
     return 0;
 }
