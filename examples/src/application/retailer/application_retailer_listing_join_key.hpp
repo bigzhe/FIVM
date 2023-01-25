@@ -15,6 +15,7 @@ void Application::on_end_processing(dbtoaster::data_t& data, bool print_result) 
 
     cout << endl << "Enumerating listing join result... " << endl;
 
+    // enumerate in the key space
     const auto& viewIIWLC = data.get_V_locn_IIWLC1();
 
     // size_t output_size = viewIIWLC.store.size();
