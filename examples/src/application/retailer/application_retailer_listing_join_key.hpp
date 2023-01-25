@@ -27,6 +27,48 @@ void Application::on_end_processing(dbtoaster::data_t& data, bool print_result) 
 
     while (tmp) {
         int locn = tmp->locn;
+        int dateid = tmp->dateid;
+        int ksn = tmp->ksn;
+        int subcategory = tmp->subcategory;
+        int category = tmp->category;
+        int categoryCluster = tmp->categoryCluster;
+        double prize = tmp->prize;
+        int rain = tmp->rain;
+        int snow = tmp->snow;
+        int maxtemp = tmp->maxtemp;
+        int mintemp = tmp->mintemp;
+        double meanwind = tmp->meanwind;
+        int thunder = tmp->thunder;
+        int population = tmp->population;
+        int white = tmp->white;
+        int asian = tmp->asian;
+        int pacific = tmp->pacific;
+        int blackafrican = tmp->blackafrican;
+        double medianage = tmp->medianage;
+        int occupiedhouseunits = tmp->occupiedhouseunits;
+        int houseunits = tmp->houseunits;
+        int families = tmp->families;
+        int households = tmp->households;
+        int husbwife = tmp->husbwife;
+        int males = tmp->males;
+        int females = tmp->females;
+        int householdschildren = tmp->householdschildren;
+        int hispanic = tmp->hispanic;
+        int rgn_cd = tmp->rgn_cd;
+        int clim_zn_nbr = tmp->clim_zn_nbr;
+        int tot_area_sq_ft = tmp->tot_area_sq_ft;
+        int sell_area_sq_ft = tmp->sell_area_sq_ft;
+        int avghhi = tmp->avghhi;
+        double supertargetdistance = tmp->supertargetdistance;
+        double supertargetdrivetime = tmp->supertargetdrivetime;
+        double targetdistance = tmp->targetdistance;
+        double targetdrivetime = tmp->targetdrivetime;
+        double walmartdistance = tmp->walmartdistance;
+        double walmartdrivetime = tmp->walmartdrivetime;
+        double walmartsupercenterdistance = tmp->walmartsupercenterdistance;
+        double walmartsupercenterdrivetime = tmp->walmartsupercenterdrivetime;
+
+
         tmp = tmp->nxt;
         // if (print_result) cout << t.first << " -> " << t.second << endl;
         if (print_result) cout << locn << endl;
