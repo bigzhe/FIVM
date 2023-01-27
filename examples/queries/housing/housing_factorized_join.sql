@@ -1,5 +1,6 @@
 IMPORT DTREE FROM FILE 'housing.txt';
 
+
 CREATE DISTRIBUTED TYPE RingFactorizedRelation
 FROM FILE 'ring/ring_factorized.hpp'
 WITH PARAMETER SCHEMA (dynamic_min);
