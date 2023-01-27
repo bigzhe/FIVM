@@ -15,7 +15,11 @@ class Application {
     Multiplexer static_multiplexer;
     Multiplexer dynamic_multiplexer;
     
-    Stopwatch batch_timer;
+    long total_enum_time = 0;
+    long total_update_time = 0;
+    Stopwatch enumerate_timer;
+    Stopwatch update_timer;
+
 
     void init_relations();
 
@@ -110,15 +114,21 @@ void Application::process_streams_snapshot(dbtoaster::data_t& data, long snapsho
     long next_snapshot = 0;
 
     while (dynamic_multiplexer.has_next()) {
-        batch_timer.restart();
+        update_timer.restart();
         dynamic_multiplexer.next();
+        update_timer.stop();
+        total_update_time += update_timer.elapsedTimeInMilliSeconds();
 
         if (data.tN >= next_snapshot) {
+            enumerate_timer.restart();
             on_snapshot(data);
+            enumerate_timer.stop();
+            total_enum_time += enumerate_timer.elapsedTimeInMilliSeconds();
+
             next_snapshot = data.tN + snapshot_interval;
+            
+            std::cout << "Batch time:  " << update_timer.elapsedTimeInMilliSeconds() + enumerate_timer.elapsedTimeInMilliSeconds() << std::endl;
         }
-        batch_timer.stop();
-        std::cout << "Batch time:  " << batch_timer.elapsedTimeInMilliSeconds() <<  std::endl;
     }
 
     if (next_snapshot != data.tN + snapshot_interval) {
@@ -195,6 +205,11 @@ void Application::run(size_t num_of_runs, bool print_result, size_t snapshot_int
         std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
 
         total_time.stop();
+        
+
+        std::cout << "-------------" << std::endl;
+        std::cout << "    Total update time: " << total_update_time << std::endl;
+        std::cout << "    Total enumerate time: " << total_enum_time  << std::endl;
 
         std::cout << "    Run: " << run
                   << "    Processed: " << data.tN
