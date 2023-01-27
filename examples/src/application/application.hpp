@@ -14,6 +14,8 @@ class Application {
     std::vector<std::unique_ptr<IRelation>> relations;
     Multiplexer static_multiplexer;
     Multiplexer dynamic_multiplexer;
+    
+    Stopwatch batch_timer;
 
     void init_relations();
 
@@ -51,7 +53,7 @@ class Application {
         clear_dispatchers();
     }
 
-    void run(size_t num_of_runs, bool output_result);
+    void run(size_t num_of_runs, bool output_result, size_t snapshot_interval);
 };
 
 void Application::load_relations() {
@@ -108,12 +110,15 @@ void Application::process_streams_snapshot(dbtoaster::data_t& data, long snapsho
     long next_snapshot = 0;
 
     while (dynamic_multiplexer.has_next()) {
+        batch_timer.restart();
         dynamic_multiplexer.next();
 
         if (data.tN >= next_snapshot) {
             on_snapshot(data);
             next_snapshot = data.tN + snapshot_interval;
         }
+        batch_timer.stop();
+        std::cout << "Batch time:  " << batch_timer.elapsedTimeInMilliSeconds() <<  std::endl;
     }
 
     if (next_snapshot != data.tN + snapshot_interval) {
@@ -127,7 +132,7 @@ void Application::process_streams_no_snapshot(dbtoaster::data_t& data) {
     }
 }
 
-void Application::run(size_t num_of_runs, bool print_result) {
+void Application::run(size_t num_of_runs, bool print_result, size_t snapshot_interval) {
     std::cout << "-------------" << std::endl;
 
     init_relations();
@@ -173,7 +178,13 @@ void Application::run(size_t num_of_runs, bool print_result) {
 
         std::cout << "4. Processing streams... " << std::flush;;
         local_time.restart();
-        process_streams(data);
+        std::cout << std::endl;
+        if (snapshot_interval == 0) {
+            process_streams_no_snapshot(data);
+        }
+        else {
+            process_streams_snapshot(data, snapshot_interval);
+        }
         local_time.stop();
         std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
 
