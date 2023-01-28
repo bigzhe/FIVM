@@ -10,7 +10,7 @@ favorita_max=$(wc -l ./data/favorita/Sales.csv | tr -s " " | cut -d" " -f2)
 rm -rf outputs
 mkdir outputs
 
-for i in 10000000 1000000 100000 
+for i in 10000000 1000000 100000 10000
 do
     # retailer
     echo "Running retailer experiments for $i"
