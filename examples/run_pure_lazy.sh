@@ -29,7 +29,7 @@ do
         head -$j ./data/retailer/Weather.tbl > ./data/retailer-static/Weather.tbl
 
         # run retailer
-        ./bin/retailer/retailer_static_BATCH_1000 --no-output | grep "On system ready" >> ./outputs/retailer_static_$i.txt
+        ./bin/retailer/retailer_static_BATCH_1000 --no-output >> ./outputs/retailer_static_$i.txt
 
         # clean up
         rm -rf ./data/retailer-static
@@ -55,7 +55,7 @@ do
         head -$j ./data/housing-1-normalised/Transport.tbl > ./data/housing-1-normalised-static/Transport.tbl
 
         # run housing
-        ./bin/housing/housing_static_BATCH_1000 --no-output | grep "On system ready" >> ./outputs/housing_static_$i.txt
+        ./bin/housing/housing_static_BATCH_1000 --no-output >> ./outputs/housing_static_$i.txt
 
         # clean up
         rm -rf ./data/housing-1-normalised-static
@@ -80,7 +80,7 @@ do
         head -$j ./data/favorita/Stores.csv > ./data/favorita-static/Stores.csv
 
         # run favorita
-        ./bin/favorita/favorita_static_BATCH_1000 --no-output | grep "On system ready" >> ./outputs/favorita_static_$i.txt
+        ./bin/favorita/favorita_static_BATCH_1000 --no-output >> ./outputs/favorita_static_$i.txt
 
         # clean up
         rm -rf ./data/favorita-static
