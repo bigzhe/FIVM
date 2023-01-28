@@ -157,6 +157,7 @@ void Application::run(size_t num_of_runs, bool print_result) {
         local_time.stop();
         std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
 
+        // this is the time to insert the data into the base relatios and build the indexes
         std::cout << "2. Processing tables... " << std::flush;
         local_time.restart();
         process_tables(data);
@@ -165,6 +166,7 @@ void Application::run(size_t num_of_runs, bool print_result) {
         
         total_time.restart();
 
+        // this is the time to compute the result of the query on the base relations
         std::cout << "3. On system ready... " << std::flush;
         local_time.restart();
         process_on_system_ready(data);
