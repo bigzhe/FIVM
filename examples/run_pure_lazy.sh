@@ -3,14 +3,14 @@
 # experiments for the pure lazy approach
 
 # for i in ()
-retailer_max=$(wc -l ./data/retailer/Inventory.tbl | tr -s " " | cut -d" " -f2)
-housing_max=$(wc -l ./data/housing-1-normalised/House.tbl | tr -s " " | cut -d" " -f2) 
-favorita_max=$(wc -l ./data/favorita/Sales.csv | tr -s " " | cut -d" " -f2)
+retailer_max=84055817
+housing_max=500000
+favorita_max=125497040
 
 rm -rf outputs
 mkdir outputs
 
-for i in 10000000 1000000 100000 10000
+for i in 10000000 1000000 
 do
     # retailer
     echo "Running retailer experiments for $i"
