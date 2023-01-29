@@ -5,22 +5,22 @@ CREATE DISTRIBUTED TYPE RingFactorizedRelation
 FROM FILE 'ring/ring_factorized.hpp'
 WITH PARAMETER SCHEMA (dynamic_min);
 
-CREATE STREAM HOUSE(postcode double, livingarea double, price double, nbbedrooms double, nbbathrooms double, kitchensize double, house double, flat double, unknown double, garden double, parking double)
+CREATE TABLE HOUSE(postcode double, livingarea double, price double, nbbedrooms double, nbbathrooms double, kitchensize double, house double, flat double, unknown double, garden double, parking double)
 FROM FILE './datasets/housing/House.tbl' LINE DELIMITED CSV(delimiter := '|');
 
-CREATE STREAM SHOP(postcode double, openinghoursshop double, pricerangeshop double, sainsburys double, tesco double, ms double)
+CREATE TABLE SHOP(postcode double, openinghoursshop double, pricerangeshop double, sainsburys double, tesco double, ms double)
 FROM FILE './datasets/housing/Shop.tbl' LINE DELIMITED CSV(delimiter := '|');
 
-CREATE STREAM INSTITUTION(postcode double, typeeducation double, sizeinstitution double)
+CREATE TABLE INSTITUTION(postcode double, typeeducation double, sizeinstitution double)
 FROM FILE './datasets/housing/Institution.tbl' LINE DELIMITED CSV(delimiter := '|');
 
-CREATE STREAM RESTAURANT(postcode double, openinghoursrest double, pricerangerest double)
+CREATE TABLE RESTAURANT(postcode double, openinghoursrest double, pricerangerest double)
 FROM FILE './datasets/housing/Restaurant.tbl' LINE DELIMITED CSV(delimiter := '|');
 
-CREATE STREAM DEMOGRAPHICS(postcode double, averagesalary double, crimesperyear double, unemployment double, nbhospitals double)
+CREATE TABLE DEMOGRAPHICS(postcode double, averagesalary double, crimesperyear double, unemployment double, nbhospitals double)
 FROM FILE './datasets/housing/Demographics.tbl' LINE DELIMITED CSV(delimiter := '|');
 
-CREATE STREAM TRANSPORT(postcode double, nbbuslines double, nbtrainstations double, distancecitycentre double)
+CREATE TABLE TRANSPORT(postcode double, nbbuslines double, nbtrainstations double, distancecitycentre double)
 FROM FILE './datasets/housing/Transport.tbl' LINE DELIMITED CSV(delimiter := '|');
 
 SELECT SUM(
