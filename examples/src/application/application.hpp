@@ -14,6 +14,13 @@ class Application {
     std::vector<std::unique_ptr<IRelation>> relations;
     Multiplexer static_multiplexer;
     Multiplexer dynamic_multiplexer;
+    
+    long total_enum_time = 0;
+    long total_update_time = 0;
+    
+    Stopwatch enumerate_timer;
+    Stopwatch update_timer;
+
 
     void init_relations();
 
@@ -31,7 +38,7 @@ class Application {
 
     void process_streams(dbtoaster::data_t& data);
 
-    void process_streams_snapshot(dbtoaster::data_t& data, long snapshot_interval);
+    void process_streams_snapshot(dbtoaster::data_t& data, long snapshot_interval, long batch_interval);
 
     void process_streams_no_snapshot(dbtoaster::data_t& data);
 
@@ -51,7 +58,7 @@ class Application {
         clear_dispatchers();
     }
 
-    void run(size_t num_of_runs, bool output_result);
+    void run(size_t num_of_runs, bool output_result, size_t snapshot_interval);
 };
 
 void Application::load_relations() {
@@ -104,15 +111,32 @@ void Application::process_streams(dbtoaster::data_t& data) {
     #endif
 }
 
-void Application::process_streams_snapshot(dbtoaster::data_t& data, long snapshot_interval) {
+void Application::process_streams_snapshot(dbtoaster::data_t& data, long snapshot_interval, long batch_interval) {
     long next_snapshot = 0;
+    long next_batch = 0;
+    long batch_time = 0;
 
     while (dynamic_multiplexer.has_next()) {
+        update_timer.restart();
         dynamic_multiplexer.next();
+        update_timer.stop();
+        total_update_time += update_timer.elapsedTimeInMilliSeconds();
+        batch_time += update_timer.elapsedTimeInMilliSeconds();
 
         if (data.tN >= next_snapshot) {
+            enumerate_timer.restart();
             on_snapshot(data);
+            enumerate_timer.stop();
+            total_enum_time += enumerate_timer.elapsedTimeInMilliSeconds();
+            batch_time += enumerate_timer.elapsedTimeInMilliSeconds();
+
             next_snapshot = data.tN + snapshot_interval;
+        }
+
+        if (data.tN >= next_batch) {
+            std::cout << "Batch time:  " << batch_time << std::endl;
+            batch_time = 0;
+            next_batch = data.tN + batch_interval;
         }
     }
 
@@ -127,12 +151,15 @@ void Application::process_streams_no_snapshot(dbtoaster::data_t& data) {
     }
 }
 
-void Application::run(size_t num_of_runs, bool print_result) {
+void Application::run(size_t num_of_runs, bool print_result, size_t snapshot_interval) {
     std::cout << "-------------" << std::endl;
 
     init_relations();
 
     Stopwatch local_time, total_time;
+    
+    long total_num_of_tuples = 0;
+    
 
     std::cout << "Loading input relations... " << std::flush;
     local_time.restart();    
@@ -141,7 +168,15 @@ void Application::run(size_t num_of_runs, bool print_result) {
     std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
     for (auto &r : relations) {
         std::cout << "  " << r->get_name() << " (" << r->size() << ") " << std::endl;
+        total_num_of_tuples += r->size();
     }
+    
+    // compute the batch interval for 100 batches
+    // for each interval, we will print the batch time
+    long batch_interval = total_num_of_tuples / 100;
+    std::cout << "Total number of tuples: " << total_num_of_tuples << std::endl;
+    std::cout << "Batch interval: " << batch_interval << std::endl;
+
 
     for (size_t run = 0; run < num_of_runs; run++) {
 
@@ -173,7 +208,13 @@ void Application::run(size_t num_of_runs, bool print_result) {
 
         std::cout << "4. Processing streams... " << std::flush;;
         local_time.restart();
-        process_streams(data);
+        std::cout << std::endl;
+        if (snapshot_interval == 0) {
+            process_streams_no_snapshot(data);
+        }
+        else {
+            process_streams_snapshot(data, snapshot_interval, batch_interval);
+        }
         local_time.stop();
         std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
 
@@ -184,6 +225,11 @@ void Application::run(size_t num_of_runs, bool print_result) {
         std::cout << local_time.elapsedTimeInMilliSeconds() << " ms" << std::endl;
 
         total_time.stop();
+        
+
+        std::cout << "-------------" << std::endl;
+        std::cout << "    Total update time: " << total_update_time << std::endl;
+        std::cout << "    Total enumerate time: " << total_enum_time  << std::endl;
 
         std::cout << "    Run: " << run
                   << "    Processed: " << data.tN
