@@ -1,6 +1,8 @@
 #ifndef CHOWLIUTREEBUILDER_HPP
 #define CHOWLIUTREEBUILDER_HPP
 
+#include <unordered_map>
+
 template <size_t SZ>
 struct ChowLiuTreeBuilder
 {
@@ -13,7 +15,12 @@ struct ChowLiuTreeBuilder
     int parent[SZ];
     int rank[SZ];
     int num_sets;
-    
+
+    // cache the group by results
+    std::unordered_map<uint32_t, uint32_t> C[SZ]; // a vector of hash maps
+    // std::unordered_map<uint32_t, uint32_t> Cy;
+
+
     // chow liu tree
     std::vector<std::pair<double, std::pair<int, int>>> tree_edges;
 
@@ -32,6 +39,7 @@ struct ChowLiuTreeBuilder
             rank[i] = 1;
         }
         num_sets = SZ;
+
     }
     
     // find the root of the set that x belongs to
@@ -118,59 +126,56 @@ struct ChowLiuTreeBuilder
 
         long count = cofactor.count;
 
+        // cache the group by results
+        for (size_t i = 0; i < SZ; i++)
+        {
+            // Cx[i].clear(); // do i need to clear the hash map?
+            for (size_t j = 0; j < cofactor.relation_array[i].tuples.size(); j++)
+            {
+                uint32_t key = cofactor.relation_array[i].tuples[j].key;
+                uint32_t value = cofactor.relation_array[i].tuples[j].value;
+                C[i][key] = value;
+            }
+        }
+
         size_t idx_XY = 0; // index of the qudratic item for X, Y in the relation array
         // for each variable X
         for (size_t X = 0; X < SZ; X++)
         {
-            // get SUM(1) GB feature X
-            const Dictionary *linear_X = &cofactor.relation_array[X];
-
             // for each variable Y
             for (size_t Y = X; Y < SZ; Y++)
             {
 
-                // get SUM(1) GB feature Y
-                const Dictionary *linear_Y = &cofactor.relation_array[Y];
-                
-                                        
-                // index of X, Y in the relation array
-                const Dictionary *quadratic_XY = nullptr; // when X == Y, quadratic_XY is not used
-                if (X != Y)
-                    quadratic_XY = &cofactor.relation_array[SZ + idx_XY++]; 
-
-                // compute the MI between feactures X and Y
-                // for each value x of X
-                for (size_t x = 0; x < linear_X->tuples.size(); x++)
+                if (X == Y)
                 {
-                    // x in dom(X)
-                    const Tuple *tuple_x = &linear_X->tuples[x];
-                    
-                    // when X == Y, tuple_x == tuple_y = tuple_xy
-                    if (X == Y)
+                    // for keys of C[X] 
+                    for (auto it = C[X].begin(); it != C[X].end(); it++)
                     {
-                        mi_matrix[X][Y] += 1.0 * tuple_x->value / count * log2(count / tuple_x->value);
-                        continue;
+                        uint32_t key = it->first;
+                        uint32_t value = it->second;
+                        mi_matrix[X][Y] += 1.0 * value / count * log2(count / value);
+                    }
+                }
+                else 
+                {
+                    // index of X, Y in the relation array
+                    const Dictionary *quadratic_XY = &cofactor.relation_array[SZ + idx_XY++]; 
+                
+                    // compute the MI between feactures X and Y
+                    // for each pair of values x, y of X, Y
+                    for (size_t i = 0; i < quadratic_XY->tuples.size(); i++)
+                    {
+                        // x, y in dom(X) x dom(Y)
+                        const Tuple *tuple_xy = &quadratic_XY->tuples[i];
+                        double Cxy = tuple_xy->value;
+                        uint32_t x = tuple_xy->slots[0];
+                        uint32_t y = tuple_xy->slots[1];
+
+                        // compute the MI
+                        mi_matrix[X][Y] += 1.0 * Cxy / count * log2(Cxy * count / (C[X][x] * C[Y][y]));
+
                     }
 
-                    // for each value y of Y
-                    for (size_t y = 0; y < linear_Y->tuples.size(); y++)
-                    {
-                        // y in dom(Y)
-                        const Tuple *tuple_y = &linear_Y->tuples[y];
-
-                        // find the tuple in quadratic_XY with the same key as tuple_x ++ tuple_y 
-                        // for loop to find the key
-                        for (size_t m = 0; m < quadratic_XY->tuples.size(); m++)
-                        {
-                            const Tuple *tuple_xy = &quadratic_XY->tuples[m];
-                            if (tuple_xy->slots[0] == tuple_x->key && tuple_xy->slots[1] == tuple_y->key)
-                            {
-                                // compute the MI
-                                mi_matrix[X][Y] += 1.0 * tuple_xy->value / count * log2(tuple_xy->value * count / (tuple_x->value * tuple_y->value));
-                                break;
-                            }
-                        }
-                    }
                 }
 
                 // symmetric
