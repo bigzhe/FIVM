@@ -119,7 +119,7 @@ ON BATCH UPDATE OF TRANSPORT {
 
 ON SYSTEM READY {
   V_house_H1(RingFactorizedRelation<[1, double, double, double, double, double, double, double, double, double, double]>)[][postcode]<Local>  :=  AggSum([postcode],
-    (V_HOUSE(longn)[][postcode, livingarea, price, nbbedrooms, nbbathrooms, kitchensize, house, flat, unknown, garden, parking] * [lift<1>: RingFactorizedRelation<[1, double, double, double, double, double, double, double, double, double, double]>](livingarea, price, nbbedrooms, nbbathrooms, kitchensize, house, flat, unknown, garden, parking))
+    (V_HOUSE(long)[][postcode, livingarea, price, nbbedrooms, nbbathrooms, kitchensize, house, flat, unknown, garden, parking] * [lift<1>: RingFactorizedRelation<[1, double, double, double, double, double, double, double, double, double, double]>](livingarea, price, nbbedrooms, nbbathrooms, kitchensize, house, flat, unknown, garden, parking))
   );
   V_sainsburys_S1(RingFactorizedRelation<[11, double, double, double, double, double]>)[][postcode]<Local>  :=  AggSum([postcode],
     (V_SHOP(long)[][postcode, openinghoursshop, pricerangeshop, sainsburys, tesco, ms] * [lift<11>: RingFactorizedRelation<[11, double, double, double, double, double]>](openinghoursshop, pricerangeshop, sainsburys, tesco, ms))
