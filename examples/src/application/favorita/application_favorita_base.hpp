@@ -3,7 +3,7 @@
 
 #include "../application.hpp"
 
-const string dataPath = "data/favorita-static";
+const string dataPath = "data/favorita";
 
 void Application::init_relations() {
     clear_relations();
