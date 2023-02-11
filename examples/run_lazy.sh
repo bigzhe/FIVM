@@ -37,17 +37,17 @@ for i in 10000000 1000000 100000 10000
 do
     # # retailer
     echo "Running retailer experiments for $i"
-    ./bin/retailer/retailer_pure_list_BATCH_1000 --no-output -s $i > outputs/retailer_pure_list_BATCH_$i.txt
-    ./bin/retailer/retailer_pure_fact_BATCH_1000 --no-output -s $i > outputs/retailer_pure_fact_BATCH_$i.txt
+    ./bin/retailer/retailer_pure_list_BATCH_1000 --no-output -s $i > outputs/retailer_list_BATCH_$i.txt
+    ./bin/retailer/retailer_pure_fact_BATCH_1000 --no-output -s $i > outputs/retailer_fact_BATCH_$i.txt
 
     # favorita
     echo "Running favorita experiments for $i"
-    ./bin/favorita/favorita_pure_list_BATCH_1000 --no-output -s $i > outputs/favorita_pure_list_BATCH_$i.txt
-    ./bin/favorita/favorita_pure_fact_BATCH_1000 --no-output -s $i > outputs/favorita_pure_fact_BATCH_$i.txt
+    ./bin/favorita/favorita_pure_list_BATCH_1000 --no-output -s $i > outputs/favorita_list_BATCH_$i.txt
+    ./bin/favorita/favorita_pure_fact_BATCH_1000 --no-output -s $i > outputs/favorita_fact_BATCH_$i.txt
 
     # # housing
     echo "Running housing experiments for $i"
-    ./bin/housing/housing_pure_list_BATCH_1000 --no-output -s $i > outputs/housing_pure_list_BATCH_$i.txt
-    ./bin/housing/housing_pure_fact_BATCH_1000 --no-output -s $i > outputs/housing_pure_fact_BATCH_$i.txt
+    ./bin/housing/housing_pure_list_BATCH_1000 --no-output -s $i > outputs/housing_list_BATCH_$i.txt
+    ./bin/housing/housing_pure_fact_BATCH_1000 --no-output -s $i > outputs/housing_fact_BATCH_$i.txt
 
 done
