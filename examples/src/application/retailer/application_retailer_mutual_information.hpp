@@ -25,12 +25,12 @@ void Application::on_end_processing(dbtoaster::data_t& data, bool print_result) 
     clt_builder.build_mi_matrix(cofactor_matrix);
 
     // // print out the MI matrix
-    // for (size_t i = 0; i < 39; i++) {
-    //     for (size_t j = 0; j < 39; j++) {
-    //         std::cout << clt_builder.mi_matrix[i][j] << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
+    for (size_t i = 0; i < 39; i++) {
+        for (size_t j = 0; j < 39; j++) {
+            std::cout << clt_builder.mi_matrix[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
     
     // build the chow liu tree
     clt_builder.build_chow_liu_tree();

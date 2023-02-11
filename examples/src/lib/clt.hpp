@@ -17,8 +17,7 @@ struct ChowLiuTreeBuilder
     int num_sets;
 
     // cache the group by results
-    std::unordered_map<uint32_t, uint32_t> C[SZ]; // a vector of hash maps
-    // std::unordered_map<uint32_t, uint32_t> Cy;
+    std::unordered_map<uint32_t, double> C[SZ]; // a vector of hash maps
 
 
     // chow liu tree
@@ -129,11 +128,11 @@ struct ChowLiuTreeBuilder
         // cache the group by results
         for (size_t i = 0; i < SZ; i++)
         {
-            // Cx[i].clear(); // do i need to clear the hash map?
+            // C[i].clear(); // do i need to clear the hash map?
             for (size_t j = 0; j < cofactor.relation_array[i].tuples.size(); j++)
             {
-                uint32_t key = cofactor.relation_array[i].tuples[j].key;
-                uint32_t value = cofactor.relation_array[i].tuples[j].value;
+                uint64_t key = cofactor.relation_array[i].tuples[j].key;
+                double value = cofactor.relation_array[i].tuples[j].value;
                 C[i][key] = value;
             }
         }
@@ -151,8 +150,8 @@ struct ChowLiuTreeBuilder
                     // for keys of C[X] 
                     for (auto it = C[X].begin(); it != C[X].end(); it++)
                     {
-                        uint32_t key = it->first;
-                        uint32_t value = it->second;
+                        // uint32_t key = it->first;
+                        double value = it->second;
                         mi_matrix[X][Y] += 1.0 * value / count * log2(count / value);
                     }
                 }
