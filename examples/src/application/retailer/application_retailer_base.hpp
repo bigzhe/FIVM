@@ -3,7 +3,7 @@
 
 #include "../application.hpp"
 
-const string dataPath = "data/retailer-static";
+const string dataPath = "data/retailer";
 
 void Application::init_relations() {
     clear_relations();
