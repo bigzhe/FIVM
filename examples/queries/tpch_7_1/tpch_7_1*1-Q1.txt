@@ -1,7 +1,7 @@
 6 2
 0 regionkey int -1 {} 0
-1 nationkey int 0 {0} 0
-2 n_name string 1 {0,1} 0
+1 n_name string 0 {0} 0
+2 nationkey int 1 {0,1} 0
 3 n_comment string 2 {0,1,2} 0
 4 r_name string 0 {0} 0
 5 r_comment string 4 {0,4} 0
