@@ -1,0 +1,20 @@
+16 2
+0 custkey int -1 {} 0
+1 o_orderstatus char 0 {0} 0
+2 orderkey int 1 {0,1} 0
+3 o_orderpriority string 2 {0,1,2} 0
+4 o_shippriority int 3 {0,1,2,3} 0
+5 o_clerk string 4 {0,1,2,3,4} 0
+6 o_comment string 5 {0,1,2,3,4,5} 0
+7 o_totalprice double 6 {0,1,2,3,4,5,6} 0
+8 o_orderdate string 7 {0,1,2,3,4,5,6,7} 0
+9 c_name string 0 {0} 0
+10 c_mktsegment string 9 {0,9} 0
+11 c_phone string 10 {0,9,10} 0
+12 nationkey int 11 {0,9,10,11} 0
+13 c_acctbal double 12 {0,9,10,11,12} 0
+14 c_comment string 13 {0,9,10,11,12,13} 0
+15 c_address string 14 {0,9,10,11,12,13,14} 0
+orders 8 orderkey,custkey,o_orderstatus,o_totalprice,o_orderdate,o_orderpriority,o_clerk,o_shippriority,o_comment
+customer 15 custkey,c_name,c_address,nationkey,c_phone,c_acctbal,c_mktsegment,c_comment
+

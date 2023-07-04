@@ -1,0 +1,23 @@
+19 2
+0 suppkey int -1 {} 0
+1 partkey int 0 {0} 0
+2 ps_comment string 1 {0,1} 0
+3 ps_supplycost double 2 {0,1,2} 0
+4 ps_availqty int 3 {0,1,2,3} 0
+5 l_quantity double 1 {0,1} 0
+6 orderkey int 5 {0,1,5} 0
+7 l_receiptdate string 6 {0,1,5,6} 0
+8 l_comment string 7 {0,1,5,6,7} 0
+9 l_tax double 8 {0,1,5,6,7,8} 0
+10 l_linestatus char 9 {0,1,5,6,7,8,9} 0
+11 l_discount double 10 {0,1,5,6,7,8,9,10} 0
+12 l_extendedprice double 11 {0,1,5,6,7,8,9,10,11} 0
+13 l_linenumber int 12 {0,1,5,6,7,8,9,10,11,12} 0
+14 l_shipinstruct string 13 {0,1,5,6,7,8,9,10,11,12,13} 0
+15 l_returnflag char 14 {0,1,5,6,7,8,9,10,11,12,13,14} 0
+16 l_shipmode string 15 {0,1,5,6,7,8,9,10,11,12,13,14,15} 0
+17 l_commitdate string 16 {0,1,5,6,7,8,9,10,11,12,13,14,15,16} 0
+18 l_shipdate string 17 {0,1,5,6,7,8,9,10,11,12,13,14,15,16,17} 0
+partsupp 4 partkey,suppkey,ps_availqty,ps_supplycost,ps_comment
+lineitem 18 orderkey,partkey,suppkey,l_linenumber,l_quantity,l_extendedprice,l_discount,l_tax,l_returnflag,l_linestatus,l_shipdate,l_commitdate,l_receiptdate,l_shipinstruct,l_shipmode,l_comment
+
