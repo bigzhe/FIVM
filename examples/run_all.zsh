@@ -1,5 +1,5 @@
 #!/bin/zsh
-echo "-$1-$2-"
+echo "-$1-$2-$3-"
 # Function to find the next available file name
 get_next_filename() {
   local suffix=1
@@ -23,12 +23,17 @@ fi
 # Read the comma-separated lists from the file run_params.txt
 IFS=',' read -rA list1 <<< $(sed -n 1p run_params.txt)
 IFS=',' read -rA list2 <<< $(sed -n 2p run_params.txt)
+batch_size=1000
+
+if [[ $3 != "" ]]; then
+  batch_size=$3
+fi
 
 if [[ $2 != "cav" ]]; then
   make clean
   for item in $list1; do
-    echo make DATASET="$item"
-    make -j8 DATASET="$item"
+    echo make DATASET="$item" BATCH_SIZE="$batch_size"
+    make -j8 DATASET="$item" BATCH_SIZE="$batch_size"
   done
 fi
 num_iter=${1:-1}
@@ -37,12 +42,12 @@ num_iter=${1:-1}
 for item in $list1; do
   #CAVIER
   if [[ $2 != "fivm" ]]; then
-    echo run_cavier.zsh "$item" "-r$num_iter"
-    zsh run_cavier.zsh "$item" "-r$num_iter"
+    echo run_cavier.zsh "$item" "-r$num_iter" "$batch_size"
+    zsh run_cavier.zsh "$item" "-r$num_iter" "$batch_size"
   fi
   if [[ $2 != "cav" ]]; then
   #FIVM
-    for file in ./bin/"$item/$item"*_BATCH_1000; do
+    for file in ./bin/"$item/$item"*_BATCH_"$batch_size"; do
       echo "$file" -r "$num_iter"
       "$file" -r "$num_iter"
     done

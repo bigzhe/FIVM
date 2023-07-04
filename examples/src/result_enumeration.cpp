@@ -248,17 +248,13 @@ struct ViewConfig {
       res += join(_all_vars, ", ");
       res += "});\n";
       if (query->call_batch_update) {
-        res += "if (output_size % " + std::to_string(query->propagation_size) + " == " +
-               std::to_string(query->propagation_size) +
-               "-1) { enumeration_timer.stop(); enumeration_time += enumeration_timer.elapsedTimeInMilliSeconds();" +
+        res += std::string("if (output_size % BATCH_SIZE == BATCH_SIZE -1) { enumeration_timer.stop(); enumeration_time += enumeration_timer.elapsedTimeInMilliSeconds();") +
                "propagation_timer.restart(); data.on_batch_update_" + query->query_name +
                "(update.begin(), update.end()); propagation_timer.stop();propagation_time += propagation_timer.elapsedTimeInMilliSeconds();\n";
         res += +"enumeration_timer.restart();update.clear();}\n";
       } else {
 
-        res += "if (output_size % " + std::to_string(query->propagation_size) + " == " +
-               std::to_string(query->propagation_size) +
-               "-1) { update.clear();}\n";
+        res += "if (output_size % BATCH_SIZE == BATCH_SIZE -1){ update.clear();}\n";
       }
 
       res += +"if (print_result) { output_file << " + output_vars +
@@ -506,7 +502,7 @@ public:
         "       << measurement->enumeration_time << \" | \"\n"
         "       << measurement->size_output << \" | \"\n"
         "       << measurement->free_variables << \" | \"\n"
-        "       << measurement->relations;\n"
+        "       << measurement->relations << \"| \" << BATCH_SIZE;\n"
         "    return os;\n"
         "}\n\n"
         "void write_to_config(std::vector<Measurement*>* measurements, std::ofstream& measurements_file, std::string relations){\n"
@@ -703,22 +699,25 @@ public:
       res += "    measurements.push_back(&measure_" + query->query_name + ");\n";
     }
 
+    std::string propagation_times;
     for (auto query_1: *queries) {
       int count = 0;
       for (auto query_2: *queries) {
         for (const auto &atom: query_atoms->at(query_2->query_name)) {
           if (atom == query_1->query_name) {
-            res += "    measure_" + query_2->query_name + ".update_time += " + query_1->query_name + "_propagation;\n";
+            propagation_times += "    measure_" + query_2->query_name + ".update_time += " + query_1->query_name + "_propagation / query_" + query_1->query_name+"_count;\n";
             count++;
           }
         }
       }
+      res += "int query_" + query_1->query_name+"_count = " + std::to_string(count) + ";\n";
       if (count > 1) {
         res += "std::cout << \"WARNING: " + query_1->query_name +
                " is used in multiple queries but propagation time is indivisible. updating with " +
                query_1->query_name + " took\" << " + query_1->query_name + R"(_propagation << "ms"<< std::endl;)";
       }
     }
+    res += propagation_times;
     res += "std::ofstream measurements_file(\"output/output.txt\", std::ios::app | std::ios::out);\n";
     res += "write_to_config(&measurements, measurements_file, relation_list);\n";
     res += "measurements_file.close();\n";
