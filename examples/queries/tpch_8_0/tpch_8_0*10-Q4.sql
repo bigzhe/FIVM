@@ -10,7 +10,7 @@ CREATE STREAM partsupp (
 	ps_availqty 	 INT, 
 	ps_supplycost 	 DECIMAL, 
 	ps_comment 	 VARCHAR(199)) 
-FROM FILE './datasets/tpch_unordered1/partsupp.csv' 
+FROM FILE './datasets/tpch_unordered10/partsupp.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM lineitem (
@@ -30,7 +30,7 @@ CREATE STREAM lineitem (
 	l_shipinstruct 	 CHAR(25), 
 	l_shipmode 	 CHAR(10), 
 	l_comment 	 VARCHAR(44)) 
-FROM FILE './datasets/tpch_unordered1/lineitem.csv' 
+FROM FILE './datasets/tpch_unordered10/lineitem.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM part (
@@ -43,14 +43,14 @@ CREATE STREAM part (
 	p_container 	 CHAR(10), 
 	p_retailprice 	 DECIMAL, 
 	p_comment 	 VARCHAR(23)) 
-FROM FILE './datasets/tpch_unordered1/part.csv' 
+FROM FILE './datasets/tpch_unordered10/part.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 
 SELECT SUM(
 	[lift<0>: RingFactorizedRelation<[0, INT]>](suppkey) *
 	[lift<1>: RingFactorizedRelation<[1, INT]>](partkey) *
-	[lift<2>: RingFactorizedRelation<[2, DECIMAL,INT]>](l_quantity,orderkey) *
+	[lift<2>: RingFactorizedRelation<[2, INT,DECIMAL]>](orderkey,l_quantity) *
 	[lift<4>: RingFactorizedRelation<[4, VARCHAR(55)]>](p_name) 
 )
 FROM partsupp NATURAL JOIN lineitem NATURAL JOIN part;

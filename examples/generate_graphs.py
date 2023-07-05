@@ -7,10 +7,13 @@ import matplotlib.colors as mcolors
 import re
 
 # Read the text file
-with open('output/custom_hash/unordered/cavier/tpch.txt', 'r') as f:
+# with open('output/custom_hash/unordered/cavier/tpch.txt', 'r') as f:
+#     lines = f.readlines()
+# with open('output/custom_hash/unordered/fivm/tpch.txt', 'r') as f:
+#     lines.extend(f.readlines())
+
+with open('output/output.txt', 'r') as f:
     lines = f.readlines()
-with open('output/custom_hash/unordered/fivm/tpch.txt', 'r') as f:
-    lines.extend(f.readlines())
 root_regex = r'(\D*\d+)'
 # Parse the data
 data = []
@@ -19,7 +22,7 @@ for line in lines:
     name, executor, dataset, _, all_relations = name_dataset_processing.split('|')
     base = [name, dataset, all_relations]
     for res in rest:
-        subname, maptype, update_time, enumeration_time, count, varnames, relations = res.split('|')
+        subname, maptype, update_time, enumeration_time, count, varnames, relations, batch_size = res.split('|')
         splitted_var_names = [x.strip() for x in varnames.lower().split(',')]
         sorted_var_names = ','.join(sorted(splitted_var_names)).replace(' ', '').replace('_', '')
         # extract the query root using the regex r'(\D*\d+)' and strip the whitespaces

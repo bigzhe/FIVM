@@ -10,7 +10,7 @@ CREATE STREAM partsupp (
 	ps_availqty 	 INT, 
 	ps_supplycost 	 DECIMAL, 
 	ps_comment 	 VARCHAR(199)) 
-FROM FILE './datasets/tpch_unordered1/partsupp.csv' 
+FROM FILE './datasets/tpch_unordered10/partsupp.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM lineitem (
@@ -30,7 +30,7 @@ CREATE STREAM lineitem (
 	l_shipinstruct 	 CHAR(25), 
 	l_shipmode 	 CHAR(10), 
 	l_comment 	 VARCHAR(44)) 
-FROM FILE './datasets/tpch_unordered1/lineitem.csv' 
+FROM FILE './datasets/tpch_unordered10/lineitem.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM orders (
@@ -43,13 +43,13 @@ CREATE STREAM orders (
 	o_clerk 	 CHAR(15), 
 	o_shippriority 	 INT, 
 	o_comment 	 VARCHAR(79)) 
-FROM FILE './datasets/tpch_unordered1/orders.csv' 
+FROM FILE './datasets/tpch_unordered10/orders.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 
 SELECT SUM(
 	[lift<0>: RingFactorizedRelation<[0, INT]>](orderkey) *
-	[lift<4>: RingFactorizedRelation<[4, CHAR(1),INT]>](o_orderstatus,custkey) *
+	[lift<4>: RingFactorizedRelation<[4, INT,CHAR(1)]>](custkey,o_orderstatus) *
 	[lift<1>: RingFactorizedRelation<[1, INT]>](partkey) *
 	[lift<2>: RingFactorizedRelation<[2, INT]>](suppkey) *
 	[lift<3>: RingFactorizedRelation<[3, DECIMAL]>](l_quantity) 

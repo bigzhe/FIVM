@@ -9,14 +9,14 @@ CREATE STREAM nation (
 	n_name 	 CHAR(25), 
 	regionkey 	 INT, 
 	n_comment 	 VARCHAR(152)) 
-FROM FILE './datasets/tpch_unordered1/nation.csv' 
+FROM FILE './datasets/tpch_unordered10/nation.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM region (
 	regionkey 	 INT, 
 	r_name 	 CHAR(25), 
 	r_comment 	 VARCHAR(152)) 
-FROM FILE './datasets/tpch_unordered1/region.csv' 
+FROM FILE './datasets/tpch_unordered10/region.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM customer (
@@ -28,7 +28,7 @@ CREATE STREAM customer (
 	c_acctbal 	 DECIMAL, 
 	c_mktsegment 	 CHAR(10), 
 	c_comment 	 VARCHAR(117)) 
-FROM FILE './datasets/tpch_unordered1/customer.csv' 
+FROM FILE './datasets/tpch_unordered10/customer.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM orders (
@@ -41,7 +41,7 @@ CREATE STREAM orders (
 	o_clerk 	 CHAR(15), 
 	o_shippriority 	 INT, 
 	o_comment 	 VARCHAR(79)) 
-FROM FILE './datasets/tpch_unordered1/orders.csv' 
+FROM FILE './datasets/tpch_unordered10/orders.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM lineitem (
@@ -61,7 +61,7 @@ CREATE STREAM lineitem (
 	l_shipinstruct 	 CHAR(25), 
 	l_shipmode 	 CHAR(10), 
 	l_comment 	 VARCHAR(44)) 
-FROM FILE './datasets/tpch_unordered1/lineitem.csv' 
+FROM FILE './datasets/tpch_unordered10/lineitem.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM partsupp (
@@ -70,7 +70,7 @@ CREATE STREAM partsupp (
 	ps_availqty 	 INT, 
 	ps_supplycost 	 DECIMAL, 
 	ps_comment 	 VARCHAR(199)) 
-FROM FILE './datasets/tpch_unordered1/partsupp.csv' 
+FROM FILE './datasets/tpch_unordered10/partsupp.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM part (
@@ -83,14 +83,14 @@ CREATE STREAM part (
 	p_container 	 CHAR(10), 
 	p_retailprice 	 DECIMAL, 
 	p_comment 	 VARCHAR(23)) 
-FROM FILE './datasets/tpch_unordered1/part.csv' 
+FROM FILE './datasets/tpch_unordered10/part.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 
 SELECT SUM(
 	[lift<0>: RingFactorizedRelation<[0, INT]>](orderkey) *
 	[lift<1>: RingFactorizedRelation<[1, INT]>](partkey) *
-	[lift<2>: RingFactorizedRelation<[2, INT,DECIMAL]>](suppkey,l_quantity) *
+	[lift<2>: RingFactorizedRelation<[2, DECIMAL,INT]>](l_quantity,suppkey) *
 	[lift<4>: RingFactorizedRelation<[4, VARCHAR(55)]>](p_name) *
 	[lift<5>: RingFactorizedRelation<[5, INT]>](custkey) *
 	[lift<13>: RingFactorizedRelation<[13, CHAR(1)]>](o_orderstatus) *

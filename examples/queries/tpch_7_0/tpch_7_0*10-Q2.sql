@@ -9,14 +9,14 @@ CREATE STREAM nation (
 	n_name 	 CHAR(25), 
 	regionkey 	 INT, 
 	n_comment 	 VARCHAR(152)) 
-FROM FILE './datasets/tpch_unordered1/nation.csv' 
+FROM FILE './datasets/tpch_unordered10/nation.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM region (
 	regionkey 	 INT, 
 	r_name 	 CHAR(25), 
 	r_comment 	 VARCHAR(152)) 
-FROM FILE './datasets/tpch_unordered1/region.csv' 
+FROM FILE './datasets/tpch_unordered10/region.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM customer (
@@ -28,7 +28,7 @@ CREATE STREAM customer (
 	c_acctbal 	 DECIMAL, 
 	c_mktsegment 	 CHAR(10), 
 	c_comment 	 VARCHAR(117)) 
-FROM FILE './datasets/tpch_unordered1/customer.csv' 
+FROM FILE './datasets/tpch_unordered10/customer.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 
@@ -36,7 +36,7 @@ SELECT SUM(
 	[lift<0>: RingFactorizedRelation<[0, INT]>](nationkey) *
 	[lift<6>: RingFactorizedRelation<[6, VARCHAR(25),INT]>](c_name,custkey) *
 	[lift<1>: RingFactorizedRelation<[1, INT]>](regionkey) *
-	[lift<2>: RingFactorizedRelation<[2, CHAR(25),VARCHAR(152)]>](n_name,n_comment) *
+	[lift<2>: RingFactorizedRelation<[2, VARCHAR(152),CHAR(25)]>](n_comment,n_name) *
 	[lift<4>: RingFactorizedRelation<[4, VARCHAR(152),CHAR(25)]>](r_comment,r_name) 
 )
 FROM nation NATURAL JOIN region NATURAL JOIN customer;

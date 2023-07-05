@@ -10,7 +10,7 @@ CREATE STREAM partsupp (
 	ps_availqty 	 INT, 
 	ps_supplycost 	 DECIMAL, 
 	ps_comment 	 VARCHAR(199)) 
-FROM FILE './datasets/tpch_unordered1/partsupp.csv' 
+FROM FILE './datasets/tpch_unordered10/partsupp.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM lineitem (
@@ -30,7 +30,7 @@ CREATE STREAM lineitem (
 	l_shipinstruct 	 CHAR(25), 
 	l_shipmode 	 CHAR(10), 
 	l_comment 	 VARCHAR(44)) 
-FROM FILE './datasets/tpch_unordered1/lineitem.csv' 
+FROM FILE './datasets/tpch_unordered10/lineitem.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 

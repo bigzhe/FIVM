@@ -14,7 +14,7 @@ CREATE STREAM orders (
 	o_clerk 	 CHAR(15), 
 	o_shippriority 	 INT, 
 	o_comment 	 VARCHAR(79)) 
-FROM FILE './datasets/tpch_unordered1/orders.csv' 
+FROM FILE './datasets/tpch_unordered10/orders.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM customer (
@@ -26,13 +26,13 @@ CREATE STREAM customer (
 	c_acctbal 	 DECIMAL, 
 	c_mktsegment 	 CHAR(10), 
 	c_comment 	 VARCHAR(117)) 
-FROM FILE './datasets/tpch_unordered1/customer.csv' 
+FROM FILE './datasets/tpch_unordered10/customer.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 
 SELECT SUM(
 	[lift<0>: RingFactorizedRelation<[0, INT]>](custkey) *
-	[lift<1>: RingFactorizedRelation<[1, INT,CHAR(1)]>](orderkey,o_orderstatus) *
+	[lift<1>: RingFactorizedRelation<[1, CHAR(1),INT]>](o_orderstatus,orderkey) *
 	[lift<3>: RingFactorizedRelation<[3, VARCHAR(25)]>](c_name) 
 )
 FROM orders NATURAL JOIN customer;

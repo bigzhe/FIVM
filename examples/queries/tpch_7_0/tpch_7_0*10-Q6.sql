@@ -9,14 +9,14 @@ CREATE STREAM nation (
 	n_name 	 CHAR(25), 
 	regionkey 	 INT, 
 	n_comment 	 VARCHAR(152)) 
-FROM FILE './datasets/tpch_unordered1/nation.csv' 
+FROM FILE './datasets/tpch_unordered10/nation.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM region (
 	regionkey 	 INT, 
 	r_name 	 CHAR(25), 
 	r_comment 	 VARCHAR(152)) 
-FROM FILE './datasets/tpch_unordered1/region.csv' 
+FROM FILE './datasets/tpch_unordered10/region.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM customer (
@@ -28,7 +28,7 @@ CREATE STREAM customer (
 	c_acctbal 	 DECIMAL, 
 	c_mktsegment 	 CHAR(10), 
 	c_comment 	 VARCHAR(117)) 
-FROM FILE './datasets/tpch_unordered1/customer.csv' 
+FROM FILE './datasets/tpch_unordered10/customer.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM orders (
@@ -41,7 +41,7 @@ CREATE STREAM orders (
 	o_clerk 	 CHAR(15), 
 	o_shippriority 	 INT, 
 	o_comment 	 VARCHAR(79)) 
-FROM FILE './datasets/tpch_unordered1/orders.csv' 
+FROM FILE './datasets/tpch_unordered10/orders.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM lineitem (
@@ -61,7 +61,7 @@ CREATE STREAM lineitem (
 	l_shipinstruct 	 CHAR(25), 
 	l_shipmode 	 CHAR(10), 
 	l_comment 	 VARCHAR(44)) 
-FROM FILE './datasets/tpch_unordered1/lineitem.csv' 
+FROM FILE './datasets/tpch_unordered10/lineitem.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM partsupp (
@@ -70,7 +70,7 @@ CREATE STREAM partsupp (
 	ps_availqty 	 INT, 
 	ps_supplycost 	 DECIMAL, 
 	ps_comment 	 VARCHAR(199)) 
-FROM FILE './datasets/tpch_unordered1/partsupp.csv' 
+FROM FILE './datasets/tpch_unordered10/partsupp.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM part (
@@ -83,7 +83,7 @@ CREATE STREAM part (
 	p_container 	 CHAR(10), 
 	p_retailprice 	 DECIMAL, 
 	p_comment 	 VARCHAR(23)) 
-FROM FILE './datasets/tpch_unordered1/part.csv' 
+FROM FILE './datasets/tpch_unordered10/part.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
 
@@ -97,7 +97,7 @@ SELECT SUM(
 	[lift<6>: RingFactorizedRelation<[6, INT]>](nationkey) *
 	[lift<12>: RingFactorizedRelation<[12, VARCHAR(25)]>](c_name) *
 	[lift<7>: RingFactorizedRelation<[7, INT]>](regionkey) *
-	[lift<8>: RingFactorizedRelation<[8, CHAR(25),VARCHAR(152)]>](n_name,n_comment) *
+	[lift<8>: RingFactorizedRelation<[8, VARCHAR(152),CHAR(25)]>](n_comment,n_name) *
 	[lift<10>: RingFactorizedRelation<[10, VARCHAR(152),CHAR(25)]>](r_comment,r_name) 
 )
 FROM nation NATURAL JOIN region NATURAL JOIN customer NATURAL JOIN orders NATURAL JOIN lineitem NATURAL JOIN partsupp NATURAL JOIN part;
