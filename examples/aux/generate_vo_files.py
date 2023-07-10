@@ -90,9 +90,9 @@ class VariableOrderNode:
             res += child.generate_config()
         return res
 
-    def generate_sql(self):
+    def generate_sql(self, ring):
 
-        (s, n) = self.generate_sql_line()
+        (s, n) = self.generate_sql_line(ring)
 
         if self.all_non_join_below:
             return s
@@ -105,11 +105,12 @@ class VariableOrderNode:
         vars.sort(key=lambda x: x.all_non_join_below, reverse=True)
 
         for child in vars:
-            s += child.generate_sql()
+            s += child.generate_sql(ring)
 
         return s
 
-    def generate_sql_line(self):
+    def generate_sql_line(self, ring_txt):
+
         if self.all_non_join_below:
 
             # materialise all descendant in a list (there is only one path)
@@ -123,11 +124,11 @@ class VariableOrderNode:
                 [path_sql_type_table[x.name] for x in descendants])
             descendants_names = ",".join([x.name for x in descendants])
             # generate the SQL
-            s = f"\t[lift<{self.id}>: RingFactorizedRelation<[{self.id}, {descendants_types}]>]({descendants_names}) *\n"
+            s = f"\t[lift<{self.id}>: {ring_txt}<[{self.id}, {descendants_types}]>]({descendants_names}) *\n"
             return (s, len(descendants))
 
         else:
-            s = f"\t[lift<{self.id}>: RingFactorizedRelation<[{self.id}, {path_sql_type_table[self.name]}]>]({self.name}) *\n"
+            s = f"\t[lift<{self.id}>: {ring_txt}<[{self.id}, {path_sql_type_table[self.name]}]>]({self.name}) *\n"
             return (s, 1)
 
     def __str__(self):
@@ -339,7 +340,7 @@ def compute_join_variables(relations):
     return join_vars
 
 
-def generate_sql_text(all_relations: "List[Relation]", root: "VariableOrderNode", free_variables: set[str], query_group: str, q: str, path: str):
+def generate_sql_text(all_relations: "List[Relation]", root: "VariableOrderNode", free_variables: set[str], query_group: str, q: str, path: str, ring_txt: str):
 
     # join_variables = compute_join_variables(all_relations)
 
@@ -367,11 +368,12 @@ def generate_sql_text(all_relations: "List[Relation]", root: "VariableOrderNode"
 
     # visualize_node(root)
 
+
     s = f"IMPORT DTREE FROM FILE '{query_group}-{q}.txt';"
     s += "\n\n"
 
     s += "CREATE DISTRIBUTED TYPE RingFactorizedRelation\n"
-    s += "FROM FILE 'ring/ring_factorized.hpp'\n"
+    s += f"FROM FILE 'ring/{ring_txt}.hpp'\n"
     s += "WITH PARAMETER SCHEMA (dynamic_min);\n\n"
 
     for relation in all_relations:
@@ -382,7 +384,7 @@ def generate_sql_text(all_relations: "List[Relation]", root: "VariableOrderNode"
     root.set_id(0)
     s += "SELECT SUM(\n"
 
-    s += root.generate_sql()
+    s += root.generate_sql(ring_txt)
     # remove the last *
     s = s[::-1].replace('*', "", 1)[::-1]
     s += ")\nFROM "
@@ -914,17 +916,27 @@ def main(args):
     q = args[1] # query name
     path = args[2] # path to dataset
     is_sql = args[3]
+    ring = args[4]
     # if args has 5 elements, then we are redirecting the output to a file
-    redirect = len(args) == 5
+    redirect = len(args) == 6
 
-    path_len = int(q[1:])
+    path_len = int(q.split("-")[0][1:])
+    # path_len = int(q[1:])
 
     root, relations, free_vars = generate_path_query(path_len)
 
     res = ""
 
+    
+    ring_txt = ""
+    if ring == "factorized":
+        ring_txt = "RingFactorizedRelation"
+    elif ring == "listing":
+        ring_txt = "RingRelation"
+
+
     if is_sql == "sql":
-        res = generate_sql_text(relations, root, free_vars, query_group, q, path)
+        res = generate_sql_text(relations, root, free_vars, query_group, q, path, ring_txt)
     elif is_sql == "vo":
         res = generate_txt(relations, root, free_vars)
     elif is_sql == "app":

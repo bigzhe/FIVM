@@ -1,7 +1,7 @@
 #!/bin/bash
 
-queries=("Q10" "Q15" "Q20")
-# queries=("Q10")
+# queries=("Q10" "Q15" "Q20")
+queries=("Q10")
 dataset="twitter"
 
 rm -rf "generated/m3/path_${dataset}"
