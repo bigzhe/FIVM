@@ -120,14 +120,14 @@ class VariableOrderNode:
                 descendants.append(iterator)
 
             descendants_types = ",".join(
-                [tpch_sql_type_table[x.name] for x in descendants])
+                [path_sql_type_table[x.name] for x in descendants])
             descendants_names = ",".join([x.name for x in descendants])
             # generate the SQL
             s = f"\t[lift<{self.id}>: RingFactorizedRelation<[{self.id}, {descendants_types}]>]({descendants_names}) *\n"
             return (s, len(descendants))
 
         else:
-            s = f"\t[lift<{self.id}>: RingFactorizedRelation<[{self.id}, {tpch_sql_type_table[self.name]}]>]({self.name}) *\n"
+            s = f"\t[lift<{self.id}>: RingFactorizedRelation<[{self.id}, {path_sql_type_table[self.name]}]>]({self.name}) *\n"
             return (s, 1)
 
     def __str__(self):
@@ -266,6 +266,7 @@ path_relations = [
 
 
 path_sql_type_table = {
+    "A0": "INT",
     "A1": "INT",
     "A2": "INT",
     "A3": "INT",
@@ -396,10 +397,87 @@ def generate_sql_text(all_relations: "List[Relation]", root: "VariableOrderNode"
 def generate_relation_sql_text(relation: "Relation", path: str):
     s = f"CREATE STREAM {relation.name} (\n"
     for key, value in relation.variables.items():
-        s += f"\t{key} \t {tpch_sql_type_table[key]}, \n"
+        s += f"\t{key} \t {path_sql_type_table[key]}, \n"
     s = s[:-3]
     s += f") \nFROM FILE './datasets/{path}/{relation.name}.csv' \nLINE DELIMITED CSV (delimiter := '|');\n"
     return s
+
+def generate_application_text(all_relations: "List[Relation]", query_group: str, q: str, path: str):
+
+    s = f"#ifndef APPLICATION_{query_group.upper()}_{q.upper()}_BASE_HPP\n"
+    s += f"#define APPLICATION_{query_group.upper()}_{q.upper()}_BASE_HPP\n\n"
+    s += "#include \"../application.hpp\"\n\n"
+    s += f"const string dataPath = \"data/{path}\";\n\n"
+    s += f"void Application::init_relations() {{\n"
+    s += "\tclear_relations();\n\n"
+
+    for relation in all_relations:
+        s += generate_stream_text(relation)
+        s += "\n"
+
+    s += "\n"
+
+    s += "}"
+
+    s += "\tvoid Application::on_snapshot(dbtoaster::data_t& data) {\n"
+    s += "\t\ton_end_processing(data, false);\n"
+    s += "\t}\n\n"
+
+    s += "\tvoid Application::on_begin_processing(dbtoaster::data_t& data) {\n\n"
+    s += "\t}\n\n"
+
+    s += "\tvoid Application::on_end_processing(dbtoaster::data_t& data, bool print_result) {\n"
+    s += "\t\tif (print_result) {\n"
+    s += "\t\t\tdata.serialize(std::cout, 0);\n"
+    s += "\t\t}\n"
+    s += "\t}\n\n"
+
+    s += "\n\n"
+    s += f"#endif /* APPLICATION_{query_group.upper()}_{q.upper()}_BASE_HPP */\n"
+    
+    
+    print(s)
+
+    return s
+
+def generate_stream_text(relation_name):
+    code = ""
+
+    code += f"""#if defined(RELATION_{relation_name}_STATIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<{relation_name}_entry>(
+            "{relation_name}", dataPath + "/{relation_name}.tbl", '|', true,
+            [](dbtoaster::data_t& data) {{
+                return [&]({relation_name}_entry& t) {{
+                    data.on_insert_{relation_name}(t);
+                }};
+            }}
+    )));
+#elif defined(RELATION_{relation_name}_DYNAMIC) && defined(BATCH_SIZE)
+    typedef const std::vector<DELTA_{relation_name}_entry>::iterator CIterator{relation_name};
+    relations.push_back(std::unique_ptr<IRelation>(
+        new BatchDispatchableRelation<DELTA_{relation_name}_entry>(
+            "{relation_name}", dataPath + "/{relation_name}.tbl", '|', false,
+            [](dbtoaster::data_t& data) {{
+                return [&](CIterator{relation_name}& begin, CIterator{relation_name}& end) {{
+                    data.on_batch_update_{relation_name}(begin, end);
+                }};
+            }}
+    )));
+#elif defined(RELATION_{relation_name}_DYNAMIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<{relation_name}_entry>(
+            "{relation_name}", dataPath + "/{relation_name}.tbl", '|', false,
+            [](dbtoaster::data_t& data) {{
+                return [&]({relation_name}_entry& t) {{
+                    data.on_insert_{relation_name}(t);
+                }};
+            }}
+    )));
+#endif"""
+
+    return code
+
 
 
 def generate_retailer_all():
@@ -814,13 +892,15 @@ def construct_balanced(attrs):
     left = construct_balanced(attrs[:m])
     right = construct_balanced(attrs[m+1:])
 
-    root.add_child(left)
-    root.add_child(right)
+    if left is not None:
+        root.add_child(left)
+    if right is not None:
+        root.add_child(right)
 
     return root
 
 def generate_path_query(n):
-    attrs = [i for i in range(n)]
+    attrs = [i+1 for i in range(n+1)]
     root = construct_balanced(attrs)
     relations = [path_relations[i] for i in range(n)]
     free_vars = set([f"A{i}" for i in range(n+1)])
@@ -833,14 +913,24 @@ def main(args):
     query_group = args[0] # prefix of the query name
     q = args[1] # query name
     path = args[2] # path to dataset
-    is_sql = args[3] == "sql"
+    is_sql = args[3]
     # if args has 5 elements, then we are redirecting the output to a file
     redirect = len(args) == 5
 
-    root, relations, free_vars = generate_path_query(5)
+    path_len = int(q[1:])
 
-    res = generate_txt(relations, root, free_vars) if not is_sql else generate_sql_text(
-        relations, root, free_vars, query_group, q, path)
+    root, relations, free_vars = generate_path_query(path_len)
+
+    res = ""
+
+    if is_sql == "sql":
+        res = generate_sql_text(relations, root, free_vars, query_group, q, path)
+    elif is_sql == "vo":
+        res = generate_txt(relations, root, free_vars)
+    elif is_sql == "app":
+        res = generate_application_text(relations, query_group, q, path)
+
+
     res += "\n"
 
     if not redirect:
