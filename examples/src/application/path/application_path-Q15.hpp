@@ -3,7 +3,7 @@
 
 #include "../application.hpp"
 
-const string dataPath = "data/ego-twitter";
+const string dataPath = "data/snap";
 
 void Application::init_relations() {
 	clear_relations();

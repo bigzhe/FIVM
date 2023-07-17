@@ -1,9 +1,9 @@
-#ifndef APPLICATION_PATH_Q5_BASE_HPP
-#define APPLICATION_PATH_Q5_BASE_HPP
+#ifndef APPLICATION_PATH_Q10_BASE_HPP
+#define APPLICATION_PATH_Q10_BASE_HPP
 
 #include "../application.hpp"
 
-const string dataPath = "data/ego-twitter";
+const string dataPath = "data/snap";
 
 void Application::init_relations() {
 	clear_relations();
@@ -168,6 +168,166 @@ void Application::init_relations() {
             }
     )));
 #endif
+#if defined(RELATION_R6_STATIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R6_entry>(
+            "R6", dataPath + "/R6.tbl", '|', true,
+            [](dbtoaster::data_t& data) {
+                return [&](R6_entry& t) {
+                    data.on_insert_R6(t);
+                };
+            }
+    )));
+#elif defined(RELATION_R6_DYNAMIC) && defined(BATCH_SIZE)
+    typedef const std::vector<DELTA_R6_entry>::iterator CIteratorR6;
+    relations.push_back(std::unique_ptr<IRelation>(
+        new BatchDispatchableRelation<DELTA_R6_entry>(
+            "R6", dataPath + "/R6.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](CIteratorR6& begin, CIteratorR6& end) {
+                    data.on_batch_update_R6(begin, end);
+                };
+            }
+    )));
+#elif defined(RELATION_R6_DYNAMIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R6_entry>(
+            "R6", dataPath + "/R6.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](R6_entry& t) {
+                    data.on_insert_R6(t);
+                };
+            }
+    )));
+#endif
+#if defined(RELATION_R7_STATIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R7_entry>(
+            "R7", dataPath + "/R7.tbl", '|', true,
+            [](dbtoaster::data_t& data) {
+                return [&](R7_entry& t) {
+                    data.on_insert_R7(t);
+                };
+            }
+    )));
+#elif defined(RELATION_R7_DYNAMIC) && defined(BATCH_SIZE)
+    typedef const std::vector<DELTA_R7_entry>::iterator CIteratorR7;
+    relations.push_back(std::unique_ptr<IRelation>(
+        new BatchDispatchableRelation<DELTA_R7_entry>(
+            "R7", dataPath + "/R7.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](CIteratorR7& begin, CIteratorR7& end) {
+                    data.on_batch_update_R7(begin, end);
+                };
+            }
+    )));
+#elif defined(RELATION_R7_DYNAMIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R7_entry>(
+            "R7", dataPath + "/R7.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](R7_entry& t) {
+                    data.on_insert_R7(t);
+                };
+            }
+    )));
+#endif
+#if defined(RELATION_R8_STATIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R8_entry>(
+            "R8", dataPath + "/R8.tbl", '|', true,
+            [](dbtoaster::data_t& data) {
+                return [&](R8_entry& t) {
+                    data.on_insert_R8(t);
+                };
+            }
+    )));
+#elif defined(RELATION_R8_DYNAMIC) && defined(BATCH_SIZE)
+    typedef const std::vector<DELTA_R8_entry>::iterator CIteratorR8;
+    relations.push_back(std::unique_ptr<IRelation>(
+        new BatchDispatchableRelation<DELTA_R8_entry>(
+            "R8", dataPath + "/R8.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](CIteratorR8& begin, CIteratorR8& end) {
+                    data.on_batch_update_R8(begin, end);
+                };
+            }
+    )));
+#elif defined(RELATION_R8_DYNAMIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R8_entry>(
+            "R8", dataPath + "/R8.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](R8_entry& t) {
+                    data.on_insert_R8(t);
+                };
+            }
+    )));
+#endif
+#if defined(RELATION_R9_STATIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R9_entry>(
+            "R9", dataPath + "/R9.tbl", '|', true,
+            [](dbtoaster::data_t& data) {
+                return [&](R9_entry& t) {
+                    data.on_insert_R9(t);
+                };
+            }
+    )));
+#elif defined(RELATION_R9_DYNAMIC) && defined(BATCH_SIZE)
+    typedef const std::vector<DELTA_R9_entry>::iterator CIteratorR9;
+    relations.push_back(std::unique_ptr<IRelation>(
+        new BatchDispatchableRelation<DELTA_R9_entry>(
+            "R9", dataPath + "/R9.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](CIteratorR9& begin, CIteratorR9& end) {
+                    data.on_batch_update_R9(begin, end);
+                };
+            }
+    )));
+#elif defined(RELATION_R9_DYNAMIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R9_entry>(
+            "R9", dataPath + "/R9.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](R9_entry& t) {
+                    data.on_insert_R9(t);
+                };
+            }
+    )));
+#endif
+#if defined(RELATION_R10_STATIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R10_entry>(
+            "R10", dataPath + "/R10.tbl", '|', true,
+            [](dbtoaster::data_t& data) {
+                return [&](R10_entry& t) {
+                    data.on_insert_R10(t);
+                };
+            }
+    )));
+#elif defined(RELATION_R10_DYNAMIC) && defined(BATCH_SIZE)
+    typedef const std::vector<DELTA_R10_entry>::iterator CIteratorR10;
+    relations.push_back(std::unique_ptr<IRelation>(
+        new BatchDispatchableRelation<DELTA_R10_entry>(
+            "R10", dataPath + "/R10.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](CIteratorR10& begin, CIteratorR10& end) {
+                    data.on_batch_update_R10(begin, end);
+                };
+            }
+    )));
+#elif defined(RELATION_R10_DYNAMIC)
+    relations.push_back(std::unique_ptr<IRelation>(
+        new EventDispatchableRelation<R10_entry>(
+            "R10", dataPath + "/R10.tbl", '|', false,
+            [](dbtoaster::data_t& data) {
+                return [&](R10_entry& t) {
+                    data.on_insert_R10(t);
+                };
+            }
+    )));
+#endif
 
 }	void Application::on_snapshot(dbtoaster::data_t& data) {
 		on_end_processing(data, false);
@@ -185,5 +345,5 @@ void Application::init_relations() {
 
 
 
-#endif /* APPLICATION_PATH_Q5_BASE_HPP */
+#endif /* APPLICATION_PATH_Q10_BASE_HPP */
 
