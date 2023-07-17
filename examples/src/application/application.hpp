@@ -124,6 +124,7 @@ void Application::process_streams_snapshot(dbtoaster::data_t& data, long snapsho
 void Application::process_streams_no_snapshot(dbtoaster::data_t& data) {
 
     Stopwatch local_time;
+    local_time.restart();
     std::cout << "  " << data.tN << std::endl;
 
     while (dynamic_multiplexer.has_next()) {
