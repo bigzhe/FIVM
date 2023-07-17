@@ -19,7 +19,7 @@ else
 	TCMALLOC_LIB=/opt/homebrew/lib
 fi
 
-CC=g++
+CC=g++-8
 CFLAGS="-O3 -DNDEBUG -Wall -Wno-unused-variable -std=c++17 -pedantic -ltcmalloc -L${TCMALLOC_LIB}"
 export LD_LIBRARY_PATH=${TCMALLOC_LIB}
 
@@ -57,8 +57,8 @@ do
     echo ../bin/run_backend.sh --batch -o "$backend_hpp" "$m3_file"
     ../bin/run_backend.sh --batch -o "$backend_hpp" "$m3_file"
 
-    echo g++ -O3 -DNDEBUG -Wall -Wno-unused-variable -std=c++17 -pedantic src/main.cpp -I ../backend/lib -I src -I src/lib -DBATCH_SIZE=1000 -include "$backend_hpp" -include "$application_hpp" -o "$binary_name"
-    g++ -O3 -DNDEBUG -Wall -Wno-unused-variable -std=c++17 -pedantic src/main.cpp -I ../backend/lib -I src -I src/lib -DBATCH_SIZE=1000 -include "$backend_hpp" -include "$application_hpp" -o "$binary_name"
+    echo CC -O3 -DNDEBUG -Wall -Wno-unused-variable -std=c++17 -pedantic src/main.cpp -I ../backend/lib -I src -I src/lib -DBATCH_SIZE=1000 -include "$backend_hpp" -include "$application_hpp" -o "$binary_name"
+    CC -O3 -DNDEBUG -Wall -Wno-unused-variable -std=c++17 -pedantic src/main.cpp -I ../backend/lib -I src -I src/lib -DBATCH_SIZE=1000 -include "$backend_hpp" -include "$application_hpp" -o "$binary_name"
 
     echo $binary_name > $output_file
     timeout 130m $binary_name > $output_file
