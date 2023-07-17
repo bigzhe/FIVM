@@ -10,7 +10,7 @@ fi
 
 # if $1 is tiktok
 if [[ "$1" == "tiktok" ]]; then
-    data_path=$DATA_DIR/tiktok/tiktok.txt
+    data_path=$DATA_DIR/tiktok/tiktok_edges_integers.tbl
 fi
 
 rm $SNAP_DIR/R*.tbl

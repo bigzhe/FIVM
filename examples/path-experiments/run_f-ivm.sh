@@ -17,7 +17,7 @@ rm -rf "bin/path"
 mkdir -p "generated/m3/path"
 mkdir -p "generated/cpp/path"
 mkdir -p "bin/path"
-mkdir -p "output/path"
+mkdir -p "path-experiments/output/path"
 
 for query in "${queries[@]}"
 do
@@ -29,7 +29,7 @@ do
     backend_hpp="generated/cpp/path/path-${query}-${method}_BATCH.hpp"
     application_hpp="src/application/path/application_path-${q_base}.hpp"
     binary_name="bin/path/path-${query}-${method}_BATCH_1000"
-    output_file="output/path/path-${query}-${method}_BATCH_1000.txt"
+    output_file="path-experiments/output/path/path-${query}-${method}_BATCH_1000.txt"
 
     echo ../bin/run_frontend.sh --batch -o "$m3_file" $sql_file
     ../bin/run_frontend.sh --batch -o "$m3_file" $sql_file
