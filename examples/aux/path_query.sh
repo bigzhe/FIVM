@@ -1,6 +1,6 @@
 #!/bin/bash
 
-queries=("Q10" "Q15" "Q20")
+queries=("Q5" "Q10" "Q15" "Q20")
 
 file_prefix="path"
 file_path="/local/scratch/zhang/FIVM/examples/queries/path_twitter/"
