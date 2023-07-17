@@ -1,19 +1,12 @@
 #!/bin/bash
 
+cd /local/scratch/zhang/FIVM/examples
+
 queries=("Q5-sum-prod" "Q10-sum-prod" "Q15-sum-prod" "Q20-sum-prod")
 dataset="twitter"
 method="F-IVM"
 
-
-# switch to the dataset
-for ((i=1; i<=20; i++))
-do
-    ln -s data/ego-twitter/twitter_combined.txt data/snap/R$i.tbl
-done
-
-
-exit 0
-
+switch_data.sh $dataset
 
 rm -rf "generated/m3/path_${dataset}"
 rm -rf "generated/cpp/path_${dataset}"
