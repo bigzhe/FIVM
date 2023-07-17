@@ -137,6 +137,7 @@ void Application::process_streams_no_snapshot(dbtoaster::data_t& data) {
         // if the elapsed time is greater than 2 hours
         if (elapsed_time > 7200000) {
             std::cout << "Processed: " << data.tN << std::endl;
+            exit(0);
         }
     }
 }
