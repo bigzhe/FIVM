@@ -1,18 +1,18 @@
 -------------------- SOURCES --------------------
 CREATE STREAM R1 (A1 int, A2 int)
-  FROM FILE './datasets/ego-twitter/R1.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R1.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R2 (A2 int, A3 int)
-  FROM FILE './datasets/ego-twitter/R2.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R2.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R3 (A3 int, A4 int)
-  FROM FILE './datasets/ego-twitter/R3.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R3.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R4 (A4 int, A5 int)
-  FROM FILE './datasets/ego-twitter/R4.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R4.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R5 (A5 int, A6 int)
-  FROM FILE './datasets/ego-twitter/R5.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R5.csv' LINE DELIMITED CSV (delimiter := '|');
 
 --------------------- MAPS ----------------------
 

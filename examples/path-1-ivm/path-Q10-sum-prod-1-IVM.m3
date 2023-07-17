@@ -1,33 +1,33 @@
 -------------------- SOURCES --------------------
 CREATE STREAM R1 (A1 int, A2 int)
-  FROM FILE './datasets/ego-twitter/R1.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R1.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R2 (A2 int, A3 int)
-  FROM FILE './datasets/ego-twitter/R2.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R2.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R3 (A3 int, A4 int)
-  FROM FILE './datasets/ego-twitter/R3.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R3.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R4 (A4 int, A5 int)
-  FROM FILE './datasets/ego-twitter/R4.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R4.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R5 (A5 int, A6 int)
-  FROM FILE './datasets/ego-twitter/R5.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R5.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R6 (A6 int, A7 int)
-  FROM FILE './datasets/ego-twitter/R6.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R6.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R7 (A7 int, A8 int)
-  FROM FILE './datasets/ego-twitter/R7.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R7.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R8 (A8 int, A9 int)
-  FROM FILE './datasets/ego-twitter/R8.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R8.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R9 (A9 int, A10 int)
-  FROM FILE './datasets/ego-twitter/R9.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R9.csv' LINE DELIMITED CSV (delimiter := '|');
 
 CREATE STREAM R10 (A10 int, A11 int)
-  FROM FILE './datasets/ego-twitter/R10.csv' LINE DELIMITED CSV (delimiter := '|');
+  FROM FILE './datasets/snap/R10.csv' LINE DELIMITED CSV (delimiter := '|');
 
 --------------------- MAPS ----------------------
 
