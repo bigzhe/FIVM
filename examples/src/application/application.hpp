@@ -134,8 +134,8 @@ void Application::process_streams_no_snapshot(dbtoaster::data_t& data) {
         local_time.stop();
         long elapsed_time = local_time.elapsedTimeInMilliSeconds();
 
-        // if the elapsed time is greater than 2 hours
-        if (elapsed_time > 7200000) {
+        // if the elapsed time is greater than 4 hours
+        if (elapsed_time > 14400000) {
             std::cout << "Processed: " << data.tN << std::endl;
             exit(0);
         }
