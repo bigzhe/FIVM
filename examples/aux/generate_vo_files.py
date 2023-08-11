@@ -901,9 +901,21 @@ def construct_balanced(attrs):
 
     return root
 
+def construct_left_deep(attrs):
+    if len(attrs) == 0:
+        return None
+
+    root = VariableOrderNode(f"A{attrs[0]}")
+    left = construct_left_deep(attrs[1:])
+    if left is not None:
+        root.add_child(left)
+
+    return root
+
 def generate_path_query(n):
     attrs = [i+1 for i in range(n+1)]
-    root = construct_balanced(attrs)
+    # root = construct_balanced(attrs)
+    root = construct_left_deep(attrs)
     relations = [path_relations[i] for i in range(n)]
     free_vars = set([f"A{i}" for i in range(n+1)])
 
