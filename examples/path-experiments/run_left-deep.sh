@@ -1,7 +1,7 @@
 #!/bin/bash
 
 WORK_DIR="/local/scratch/zhang/FIVM/examples"
-queries=("Q5-sum-prod" "Q10-sum-prod" "Q15-sum-prod" "Q20-sum-prod")
+queries=("Q10-sum-prod" "Q15-sum-prod" "Q20-sum-prod" "Q5-sum-prod")
 dataset=$1
 method="LEFT-DEEP"
 
