@@ -18,3 +18,5 @@ ln -s /local/scratch/zhang/data/favorita_unordered favorita_unordered
 
 ln -s /local/scratch/zhang/data/ego-twitter ego-twitter
 ln -s /local/scratch/zhang/data/ego-facebook ego-facebook
+
+ln -s /local/scratch/zhang/data/imdb imdb

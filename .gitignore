@@ -5,3 +5,4 @@ frontend/target
 examples/bin/
 examples/generated/
 
+examples/data
