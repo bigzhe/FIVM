@@ -129,7 +129,7 @@ void Application::process_streams_no_snapshot(dbtoaster::data_t& data) {
 
     while (dynamic_multiplexer.has_next()) {
         dynamic_multiplexer.next();
-        std::cout << "  " << data.tN << std::endl;
+        // std::cout << "  " << data.tN << std::endl;
 
         local_time.stop();
         long elapsed_time = local_time.elapsedTimeInMilliSeconds();

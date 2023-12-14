@@ -38,9 +38,9 @@ do
     echo g++ -O3 -DNDEBUG -Wall -Wno-unused-variable -std=c++17 -pedantic src/main.cpp -I ../backend/lib -I src -I src/lib -DBATCH_SIZE=1000 -include "$backend_hpp" -include "$application_hpp" -o "$binary_name"
     g++ -O3 -DNDEBUG -Wall -Wno-unused-variable -std=c++17 -pedantic src/main.cpp -I ../backend/lib -I src -I src/lib -DBATCH_SIZE=1000 -include "$backend_hpp" -include "$application_hpp" -o "$binary_name"
 
-    echo $binary_name > $output_file
+    echo "${binary_name} > ${output_file}"
     # timeout 250m $binary_name > $output_file
-    $binary_name > $output_file
+    # $binary_name > $output_file
 done
 
 

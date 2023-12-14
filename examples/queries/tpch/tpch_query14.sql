@@ -39,7 +39,7 @@ CREATE STREAM PART (
   LINE DELIMITED CSV (delimiter := '|');
 
 SELECT SUM([liftpart: TPCH14Payload](p_type) * 
-           [liftlineitem: TPCH14Payload](l_extendedprice * (1 - l_discount)))
+          [liftlineitem: TPCH14Payload](l_extendedprice * (1 - l_discount)))
 FROM lineitem NATURAL JOIN part
 WHERE l_shipdate >= DATE('1995-09-01') 
   AND l_shipdate <  DATE('1995-10-01');
