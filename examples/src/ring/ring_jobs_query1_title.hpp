@@ -3,6 +3,7 @@
 
 #include "types.hpp"
 #include "serialization.hpp"
+#include "ring_jobs_query1_movie_companies.hpp"
 
 using namespace dbtoaster;
 
@@ -24,7 +25,7 @@ struct Jobs1TitleRing {
         return *this;
     }
 
-    Jobs1TitleRing operator*(const Jobs1MovieCompaniesRing &other) {
+    RingJobs1 operator*(const Jobs1MovieCompaniesRing &other) {
         return RingJobs1(
             other.production_note,
             this->movie_title,
@@ -54,8 +55,8 @@ Jobs1TitleRing operator*(long int alpha, const Jobs1TitleRing &r) {
     return Jobs1TitleRing(r.movie_title, r.movie_year);
 }
 
-Jobs1TitleRing Ulifttitles(int movie_year, const STRING_TYPE& title) {
-    return Jobs1TitleRing(title, movie_year);
-}
+// Jobs1TitleRing Ulifttitles(int movie_year, const STRING_TYPE& title) {
+//     return Jobs1TitleRing(title, movie_year);
+// }
 
 #endif /* RINGJOBS1_HPP */
