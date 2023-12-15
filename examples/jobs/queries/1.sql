@@ -1,5 +1,8 @@
 IMPORT DTREE FROM FILE '1.txt';
 
+CREATE TYPE RingJobs1
+FROM FILE 'ring/ring_jobs_query1.hpp';
+
 CREATE STREAM TITLE (
 	movie_id 	 INT, 
 	t_title 	 VARCHAR(100), 
@@ -47,8 +50,12 @@ FROM FILE './datasets/imdb/MOVIE_INFO_IDX.csv'
 LINE DELIMITED CSV (delimiter := '|');
 
 
-SELECT SUM(1)
+-- SELECT SUM(1)
+
+SELECT SUM([liftmoviecompanies: RingJobs1](mc_note) * 
+		   [lifttitles: RingJobs1](t_production_year, t_title))
 FROM TITLE NATURAL JOIN COMPANY_TYPE NATURAL JOIN INFO_TYPE NATURAL JOIN MOVIE_COMPANIES NATURAL JOIN MOVIE_INFO_IDX;
+
 
 -- SELECT MIN(mc.note) AS production_note,
 --        MIN(t.title) AS movie_title,

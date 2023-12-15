@@ -147,6 +147,14 @@ namespace dbtoaster {
             return !(this->operator==(other));
         }
 
+        FORCE_INLINE bool operator<(const char* other) const {
+            return (strcmp(data_, other) < 0);
+        }
+
+        FORCE_INLINE bool operator<(const VariableLengthString& other) const {
+            return strcmp(data_, other.data_);
+        }
+
         FORCE_INLINE VariableLengthString& operator=(const char* str) {
             if (data_ != nullptr) { delete[] data_; }
             size_ = strlen(str);
@@ -210,6 +218,8 @@ namespace dbtoaster {
             ptr_count_ = nullptr;
             data_ = nullptr;
         }
+
+
 
         RefCountedString& operator=(const char* str) {
             if ((--(*ptr_count_)) == 0) {
@@ -318,6 +328,14 @@ namespace dbtoaster {
 
         FORCE_INLINE bool operator!=(const PooledRefCountedString& other) const {
             return !(this->operator==(other));
+        }
+
+        FORCE_INLINE bool operator<(const char* other) const {
+            return (strcmp(data_, other) < 0);
+        }
+
+        FORCE_INLINE bool operator<(const PooledRefCountedString& other) const {
+            return strcmp(data_, other.data_);
         }
 
         FORCE_INLINE PooledRefCountedString& operator=(const char* str) {

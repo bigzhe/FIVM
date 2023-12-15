@@ -23,15 +23,15 @@ namespace dbtoaster {
 
     typedef size_t HASH_RES_t;
 
-    typedef PooledRefCountedString STRING_TYPE;
+    // typedef PooledRefCountedString STRING_TYPE;
 
-    //typedef RefCountedString STRING_TYPE;
+    // typedef RefCountedString STRING_TYPE;
 
     //typedef VariableLengthString STRING_TYPE;
 
     //typedef FixedLengthString<10> STRING_TYPE;
 
-    //typedef std::string STRING_TYPE;
+    typedef std::string STRING_TYPE;
 
     template<typename T>
     struct Value {
