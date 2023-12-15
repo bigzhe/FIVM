@@ -1,13 +1,7 @@
-IMPORT DTREE FROM FILE '1.txt';
+IMPORT DTREE FROM FILE '0.txt';
 
 CREATE TYPE RingJobs1
 FROM FILE 'ring/ring_jobs_query1.hpp';
-
--- CREATE TYPE Jobs1TitleRing
--- FROM FILE 'ring/ring_jobs_query1_title.hpp';
-
--- CREATE TYPE Jobs1MovieCompaniesRing
--- FROM FILE 'ring/ring_jobs_query1_movie_companies.hpp';
 
 CREATE STREAM TITLE (
 	movie_id 	 INT, 
@@ -25,18 +19,6 @@ CREATE STREAM TITLE (
 FROM FILE './datasets/imdb/TITLE.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
-CREATE STREAM COMPANY_TYPE (
-	company_type_id 	 INT, 
-	ct_kind 	 VARCHAR(32)) 
-FROM FILE './datasets/imdb/COMPANY_TYPE.csv' 
-LINE DELIMITED CSV (delimiter := '|');
-
-CREATE STREAM INFO_TYPE (
-	info_type_id 	 INT, 
-	it_info 	 VARCHAR(32)) 
-FROM FILE './datasets/imdb/INFO_TYPE.csv' 
-LINE DELIMITED CSV (delimiter := '|');
-
 CREATE STREAM MOVIE_COMPANIES (
 	mc_id 	 INT, 
 	movie_id 	 INT, 
@@ -46,30 +28,14 @@ CREATE STREAM MOVIE_COMPANIES (
 FROM FILE './datasets/imdb/MOVIE_COMPANIES.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
-CREATE STREAM MOVIE_INFO_IDX (
-	mii_id 	 INT, 
-	movie_id 	 INT, 
-	info_type_id 	 INT, 
-	mii_info 	 VARCHAR(100), 
-	mii_note 	 VARCHAR(255)) 
-FROM FILE './datasets/imdb/MOVIE_INFO_IDX.csv' 
-LINE DELIMITED CSV (delimiter := '|');
-
-
--- SELECT SUM(1)
-
 SELECT SUM([liftmoviecompanies: RingJobs1](mc_note) * 
 		   [lifttitles: RingJobs1](t_production_year, t_title))
-FROM TITLE NATURAL JOIN COMPANY_TYPE NATURAL JOIN INFO_TYPE NATURAL JOIN MOVIE_COMPANIES NATURAL JOIN MOVIE_INFO_IDX;
+FROM TITLE NATURAL JOIN MOVIE_COMPANIES;
 
 
 -- SELECT MIN(mc.note) AS production_note,
 --        MIN(t.title) AS movie_title,
---        MIN(t.production_year) AS movie_year
--- FROM company_type AS ct,
---      info_type AS it,
---      movie_companies AS mc,
---      movie_info_idx AS mi_idx,
+-- FROM movie_companies AS mc,
 --      title AS t
 -- WHERE ct.kind = 'production companies'
 --   AND it.info = 'top 250 rank'

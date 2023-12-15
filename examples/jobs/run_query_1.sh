@@ -1,17 +1,17 @@
 #!/bin/bash
 
 WORK_DIR="/local/scratch/zhang/mflow/FIVM/examples"
-queries=("1")
+queries=("0")
 dataset=$1
 method="F-IVM"
 
 cd $WORK_DIR
 
-rm -rf "generated/m3/jobs"
+# rm -rf "generated/m3/jobs"
 rm -rf "generated/cpp/jobs"
 rm -rf "bin/jobs"
 
-mkdir -p "generated/m3/jobs"
+# mkdir -p "generated/m3/jobs"
 mkdir -p "generated/cpp/jobs"
 mkdir -p "bin/jobs"
 mkdir -p "jobs/output/jobs"
@@ -29,6 +29,7 @@ do
     binary_name="bin/jobs/jobs-${query}-${method}_BATCH_1000"
     output_file="jobs/output/jobs-${query}-${method}-${dataset}_BATCH_1000.txt"
 
+    # FIXME: do not compile sql to m3 for now
     echo ../bin/run_frontend.sh --batch -o "$m3_file" $sql_file
     ../bin/run_frontend.sh --batch -o "$m3_file" $sql_file
 

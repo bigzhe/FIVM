@@ -4,6 +4,18 @@ from typing import List
 from variable_order import Relation, VariableOrderNode, generate_txt, visualize_node, generate_sql_text, generate_application_text, generate_sql_stream_text
 from data_schema import Title, Company_Type, Info_Type, Movie_Companies, Movie_Info_Idx
 
+def jobs_query_0():
+
+    movie_id = VariableOrderNode("movie_id")
+    company_id = VariableOrderNode("company_id")
+
+    movie_id.add_child(company_id)
+
+    relations = [Title, Movie_Companies]
+
+    free_vars = {}
+
+    return (movie_id, relations, free_vars)
 
 def jobs_query_1():
 
@@ -28,7 +40,7 @@ def main(args):
 
     is_sql = args[0] if len(args) > 0 else "vo"
 
-    root, relations, free_vars = jobs_query_1()
+    root, relations, free_vars = jobs_query_0()
 
     if is_sql == "sql":
         res = generate_sql_stream_text(relations, root, free_vars, "1", "imdb", "RingFactorizedRelation")

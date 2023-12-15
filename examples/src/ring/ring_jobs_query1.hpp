@@ -63,7 +63,6 @@ RingJobs1 Ulifttitles(int movie_year, const STRING_TYPE& title) {
 }
 
 RingJobs1 Uliftmoviecompanies(const STRING_TYPE& production_note) {
-    std::cout << production_note << std::endl;
     return RingJobs1(production_note, "", 0);
 }
 
