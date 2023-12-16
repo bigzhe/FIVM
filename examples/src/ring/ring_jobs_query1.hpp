@@ -152,12 +152,20 @@ RingJobs1 operator*(long int alpha, const RingJobs1 &r) {
     return RingJobs1(r.production_note, r.movie_title, r.movie_year);
 }
 
-RingJobs1 Ulifttitles(int movie_year, const STRING_TYPE& title) {
-    return RingJobs1("", title, movie_year);
+Jobs1MovieCompaniesRing operator*(long int alpha, const Jobs1MovieCompaniesRing &r) {
+    return Jobs1MovieCompaniesRing(r.production_note);
 }
 
-RingJobs1 Uliftmoviecompanies(const STRING_TYPE& production_note) {
-    return RingJobs1(production_note, "", 0);
+Jobs1TitleRing operator*(long int alpha, const Jobs1TitleRing &r) {
+    return Jobs1TitleRing(r.movie_title, r.movie_year);
+}
+
+Jobs1TitleRing Ulifttitles(int movie_year, const STRING_TYPE& title) {
+    return Jobs1TitleRing(title, movie_year);
+}
+
+Jobs1MovieCompaniesRing Uliftmoviecompanies(const STRING_TYPE& production_note) {
+    return Jobs1MovieCompaniesRing(production_note); 
 }
 
 // define it outside the classes
@@ -168,7 +176,6 @@ RingJobs1 operator*(const Jobs1MovieCompaniesRing &lhs, const Jobs1TitleRing &rh
         rhs.movie_year
     );
 }
-
 
 // define it outside the classes
 RingJobs1 operator*(const Jobs1TitleRing &lhs, const Jobs1MovieCompaniesRing &rhs) {
