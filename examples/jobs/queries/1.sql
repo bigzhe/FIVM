@@ -3,12 +3,6 @@ IMPORT DTREE FROM FILE '1.txt';
 CREATE TYPE RingJobs1
 FROM FILE 'ring/ring_jobs_query1.hpp';
 
--- CREATE TYPE Jobs1TitleRing
--- FROM FILE 'ring/ring_jobs_query1_title.hpp';
-
--- CREATE TYPE Jobs1MovieCompaniesRing
--- FROM FILE 'ring/ring_jobs_query1_movie_companies.hpp';
-
 CREATE STREAM TITLE (
 	movie_id 	 INT, 
 	t_title 	 VARCHAR(100), 
@@ -61,6 +55,33 @@ LINE DELIMITED CSV (delimiter := '|');
 SELECT SUM([liftmoviecompanies: RingJobs1](mc_note) * 
 		   [lifttitles: RingJobs1](t_production_year, t_title))
 FROM TITLE NATURAL JOIN COMPANY_TYPE NATURAL JOIN INFO_TYPE NATURAL JOIN MOVIE_COMPANIES NATURAL JOIN MOVIE_INFO_IDX;
+
+-- 1a
+-- WHERE ct.kind = 'production companies'
+--   AND it.info = 'top 250 rank'
+--   AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+--   AND (mc.note LIKE '%(co-production)%'
+--        OR mc.note LIKE '%(presents)%')
+
+-- 1b
+-- WHERE ct.kind = 'production companies'
+--   AND it.info = 'bottom 10 rank'
+--   AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+--   AND t.production_year BETWEEN 2005 AND 2010
+
+-- 1c
+-- WHERE ct.kind = 'production companies'
+--   AND it.info = 'top 250 rank'
+--   AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+--   AND (mc.note LIKE '%(co-production)%')
+--   AND t.production_year >2010
+
+-- 1d
+-- WHERE ct.kind = 'production companies'
+--   AND it.info = 'bottom 10 rank'
+--   AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+--   AND t.production_year >2000
+
 
 
 -- SELECT MIN(mc.note) AS production_note,
