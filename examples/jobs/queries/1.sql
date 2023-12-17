@@ -53,7 +53,9 @@ LINE DELIMITED CSV (delimiter := '|');
 -- SELECT SUM(1)
 
 SELECT SUM([liftmoviecompanies: RingJobs1](mc_note) * 
-		   [lifttitles: RingJobs1](t_production_year, t_title))
+		   [lifttitles: RingJobs1](t_production_year) *
+		   [liftcompanytype: RingJobs1](ct_kind) *
+		   [liftinfotype: RingJobs1](it_info))
 FROM TITLE NATURAL JOIN COMPANY_TYPE NATURAL JOIN INFO_TYPE NATURAL JOIN MOVIE_COMPANIES NATURAL JOIN MOVIE_INFO_IDX;
 
 -- 1a
