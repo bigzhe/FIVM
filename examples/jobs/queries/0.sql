@@ -1,7 +1,7 @@
 IMPORT DTREE FROM FILE '0.txt';
 
 CREATE TYPE RingJobs1
-FROM FILE 'ring/ring_jobs_query1.hpp';
+FROM FILE 'ring/ring_jobs_query0.hpp';
 
 CREATE STREAM TITLE (
 	movie_id 	 INT, 
