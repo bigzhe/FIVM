@@ -28,9 +28,39 @@ CREATE STREAM MOVIE_COMPANIES (
 FROM FILE './datasets/imdb/MOVIE_COMPANIES.csv' 
 LINE DELIMITED CSV (delimiter := '|');
 
+-- SELECT SUM(1)
+-- FROM TITLE NATURAL JOIN MOVIE_COMPANIES;
+
 SELECT SUM([liftmoviecompanies: RingJobs1](mc_note) * 
-		   [lifttitles: RingJobs1](t_production_year, t_title))
+		   [lifttitles: RingJobs1](t_production_year))
 FROM TITLE NATURAL JOIN MOVIE_COMPANIES;
+
+-- 1a
+-- WHERE ct.kind = 'production companies'
+--   AND it.info = 'top 250 rank'
+--   AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+--   AND (mc.note LIKE '%(co-production)%'
+--        OR mc.note LIKE '%(presents)%')
+
+-- 1b
+-- WHERE ct.kind = 'production companies'
+--   AND it.info = 'bottom 10 rank'
+--   AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+--   AND t.production_year BETWEEN 2005 AND 2010
+
+-- 1c
+-- WHERE ct.kind = 'production companies'
+--   AND it.info = 'top 250 rank'
+--   AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+--   AND (mc.note LIKE '%(co-production)%')
+--   AND t.production_year >2010
+
+-- 1d
+-- WHERE ct.kind = 'production companies'
+--   AND it.info = 'bottom 10 rank'
+--   AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+--   AND t.production_year >2000
+
 
 
 -- SELECT MIN(mc.note) AS production_note,

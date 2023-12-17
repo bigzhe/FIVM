@@ -1,190 +1,217 @@
 #ifndef RINGJOBS1_HPP
 #define RINGJOBS1_HPP
 
+#include <limits>
+#include <algorithm>
+
 #include "types.hpp"
 #include "serialization.hpp"
 
 using namespace dbtoaster;
 
-struct RingJobs1;
-struct Jobs1MovieCompaniesRing;
-struct Jobs1TitleRing;
+struct RingJobs1
+{
+    // STRING_TYPE production_note; // MIN(mc.note)
+    // STRING_TYPE movie_title; // MIN(t.title)
+    // int movie_year; // MIN(t.production_year)
 
+    // production_note conditions
+    // 1: all: NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'
+    // 2: 1a, 1c: LIKE '%(co-production)%'
+    // 3: 1b: LIKE '%(presents)%'
+    // size_t count_production_note_cond1;
+    // size_t count_production_note_cond2;
+    // size_t count_production_note_cond3;
 
-struct Jobs1MovieCompaniesRing {
-    STRING_TYPE production_note; // MIN(mc.note)
+    size_t count_movie_title_1a;
+    size_t count_movie_title_1b;
+    size_t count_movie_title_1c;
+    size_t count_movie_title_1d;
 
-    explicit Jobs1MovieCompaniesRing() : production_note("") {}
-    explicit Jobs1MovieCompaniesRing(const STRING_TYPE& _production_note)
-        : production_note(_production_note) { }
-        
-    inline bool isZero() const { 
-        return production_note == ""; 
+    int min_movie_year_1a;
+    int min_movie_year_1b;
+    int min_movie_year_1c;
+    int min_movie_year_1d;
+
+    size_t count_production_note_1a;
+    size_t count_production_note_1b;
+    size_t count_production_note_1c;
+    size_t count_production_note_1d;
+
+    explicit RingJobs1() : count_movie_title_1a(0), count_movie_title_1b(0), count_movie_title_1c(0), count_movie_title_1d(0), min_movie_year_1a(std::numeric_limits<int>::max()), min_movie_year_1b(std::numeric_limits<int>::max()), min_movie_year_1c(std::numeric_limits<int>::max()), min_movie_year_1d(std::numeric_limits<int>::max()), count_production_note_1a(0), count_production_note_1b(0), count_production_note_1c(0), count_production_note_1d(0) {}
+
+    explicit RingJobs1(size_t count_movie_title_1a, size_t count_movie_title_1b, size_t count_movie_title_1c, size_t count_movie_title_1d, int min_movie_year_1a, int min_movie_year_1b, int min_movie_year_1c, int min_movie_year_1d,
+                       size_t count_production_note_1a, size_t count_production_note_1b, size_t count_production_note_1c, size_t count_production_note_1d)
+        : count_movie_title_1a(count_movie_title_1a), count_movie_title_1b(count_movie_title_1b), count_movie_title_1c(count_movie_title_1c), count_movie_title_1d(count_movie_title_1d), min_movie_year_1a(min_movie_year_1a), min_movie_year_1b(min_movie_year_1b), min_movie_year_1c(min_movie_year_1c), min_movie_year_1d(min_movie_year_1d), count_production_note_1a(count_production_note_1a), count_production_note_1b(count_production_note_1b), count_production_note_1c(count_production_note_1c), count_production_note_1d(count_production_note_1d) {}
+
+    inline bool isZero() const
+    {
+        return count_movie_title_1a == 0 && count_movie_title_1b == 0 && count_movie_title_1c == 0 && count_movie_title_1d == 0 && min_movie_year_1a == std::numeric_limits<int>::max() && min_movie_year_1b == std::numeric_limits<int>::max() && min_movie_year_1c == std::numeric_limits<int>::max() && min_movie_year_1d == std::numeric_limits<int>::max() && count_production_note_1a == 0 && count_production_note_1b == 0 && count_production_note_1c == 0 && count_production_note_1d == 0;
     }
 
-    Jobs1MovieCompaniesRing& operator+=(const Jobs1MovieCompaniesRing &r) {
-        this->production_note = (this->production_note < r.production_note ? this->production_note : r.production_note);
+    RingJobs1 &operator+=(const RingJobs1 &r)
+    {
+        this->count_movie_title_1a += r.count_movie_title_1a;
+        this->count_movie_title_1b += r.count_movie_title_1b;
+        this->count_movie_title_1c += r.count_movie_title_1c;
+        this->count_movie_title_1d += r.count_movie_title_1d;
+
+        this->min_movie_year_1a = std::min(this->min_movie_year_1a, r.min_movie_year_1a);
+        this->min_movie_year_1b = std::min(this->min_movie_year_1b, r.min_movie_year_1b);
+        this->min_movie_year_1c = std::min(this->min_movie_year_1c, r.min_movie_year_1c);
+        this->min_movie_year_1d = std::min(this->min_movie_year_1d, r.min_movie_year_1d);
+
+        this->count_production_note_1a += r.count_production_note_1a;
+        this->count_production_note_1b += r.count_production_note_1b;
+        this->count_production_note_1c += r.count_production_note_1c;
+        this->count_production_note_1d += r.count_production_note_1d;
+
         return *this;
     }
 
-    // declare it inside the class
-    friend RingJobs1 operator*(const Jobs1MovieCompaniesRing &lhs, const Jobs1TitleRing &rhs);
-    // RingJobs1 operator*(const Jobs1TitleRing &other) {
-    //     return RingJobs1(
-    //         this->production_note,
-    //         other.movie_title,
-    //         other.movie_year
-    //     );
-    // }
-
-    // the multiplicity doesn't matter here
-    Jobs1MovieCompaniesRing operator*(long int alpha) const {
-        return Jobs1MovieCompaniesRing(
-            this->production_note
-        );
-    }
-
-    template<class Archive>
-    void serialize(Archive& ar, const unsigned int version) const {
-        ar << ELEM_SEPARATOR;
-        DBT_SERIALIZATION_NVP(ar, production_note);
-    }
-};
-
-
-
-struct Jobs1TitleRing {
-    STRING_TYPE movie_title; // MIN(t.title)
-    int movie_year; // MIN(t.production_year)
-
-    explicit Jobs1TitleRing() : movie_title(""), movie_year(0) { }
-    explicit Jobs1TitleRing(const STRING_TYPE& _movie_title, int _movie_year)
-        : movie_title(_movie_title), movie_year(_movie_year) { }
-        
-    inline bool isZero() const { 
-        return movie_title == "" && movie_year == 0;
-    }
-
-    Jobs1TitleRing& operator+=(const Jobs1TitleRing &r) {
-        this->movie_title = (this->movie_title < r.movie_title ? this->movie_title : r.movie_title);
-        this->movie_year = (this->movie_year < r.movie_year ? this->movie_year : r.movie_year);
-        return *this;
-    }
-
-    // declare it inside the class
-    friend RingJobs1 operator*(const Jobs1TitleRing &lhs, const Jobs1MovieCompaniesRing &rhs);
-
-    // RingJobs1 operator*(const Jobs1MovieCompaniesRing &other) {
-    //     return RingJobs1(
-    //         other.production_note,
-    //         this->movie_title,
-    //         this->movie_year
-    //     );
-    // }
-
-    // the multiplicity doesn't matter here
-    Jobs1TitleRing operator*(long int alpha) const {
-        return Jobs1TitleRing(
-            this->movie_title,
-            this->movie_year
-        );
-    }
-
-    template<class Archive>
-    void serialize(Archive& ar, const unsigned int version) const {
-        ar << ELEM_SEPARATOR;
-        DBT_SERIALIZATION_NVP(ar, movie_title);
-        ar << ELEM_SEPARATOR;
-        DBT_SERIALIZATION_NVP(ar, movie_year);
-    }
-};
-
-
-struct RingJobs1 {
-    STRING_TYPE production_note; // MIN(mc.note)
-    STRING_TYPE movie_title; // MIN(t.title)
-    int movie_year; // MIN(t.production_year)
-
-    explicit RingJobs1() : production_note(""), movie_title(""), movie_year(0) { }
-    explicit RingJobs1(const STRING_TYPE& _production_note, const STRING_TYPE& _movie_title, int _movie_year)
-        : production_note(_production_note), movie_title(_movie_title), movie_year(_movie_year) { }
-        
-    inline bool isZero() const { 
-        return production_note == "" && movie_title == "" && movie_year == 0;
-    }
-
-    RingJobs1& operator+=(const RingJobs1 &r) {
-        this->production_note = (this->production_note < r.production_note ? this->production_note : r.production_note);
-        this->movie_title = (this->movie_title < r.movie_title ? this->movie_title : r.movie_title);
-        this->movie_year = (this->movie_year < r.movie_year ? this->movie_year : r.movie_year);
-        return *this;
-    }
-
-    RingJobs1 operator*(const RingJobs1 &other) {
+    RingJobs1 operator*(const RingJobs1 &other)
+    {
         return RingJobs1(
-            this->production_note == "" ? other.production_note : this->production_note,
-            this->movie_title == "" ? other.movie_title : this->movie_title,
-            this->movie_year == 0 ? other.movie_year : this->movie_year
-        );
+            this->count_movie_title_1a * other.count_movie_title_1a,
+            this->count_movie_title_1b * other.count_movie_title_1b,
+            this->count_movie_title_1c * other.count_movie_title_1c,
+            this->count_movie_title_1d * other.count_movie_title_1d,
+
+            this->min_movie_year_1a == std::numeric_limits<int>::max() ? other.min_movie_year_1a : this->min_movie_year_1a,
+            this->min_movie_year_1b == std::numeric_limits<int>::max() ? other.min_movie_year_1b : this->min_movie_year_1b,
+            this->min_movie_year_1c == std::numeric_limits<int>::max() ? other.min_movie_year_1c : this->min_movie_year_1c,
+            this->min_movie_year_1d == std::numeric_limits<int>::max() ? other.min_movie_year_1d : this->min_movie_year_1d,
+
+            this->count_production_note_1a * other.count_production_note_1a,
+            this->count_production_note_1b * other.count_production_note_1b,
+            this->count_production_note_1c * other.count_production_note_1c,
+            this->count_production_note_1d * other.count_production_note_1d);
     }
 
     // the multiplicity doesn't matter here
-    RingJobs1 operator*(long int alpha) const {
+    RingJobs1 operator*(long int alpha) const
+    {
         return RingJobs1(
-            this->production_note,
-            this->movie_title,
-            this->movie_year
-        );
+            this->count_movie_title_1a * alpha,
+            this->count_movie_title_1b * alpha,
+            this->count_movie_title_1c * alpha,
+            this->count_movie_title_1d * alpha,
+
+            this->min_movie_year_1a,
+            this->min_movie_year_1b,
+            this->min_movie_year_1c,
+            this->min_movie_year_1d,
+
+            this->count_production_note_1a * alpha,
+            this->count_production_note_1b * alpha,
+            this->count_production_note_1c * alpha,
+            this->count_production_note_1d * alpha);
     }
 
-    template<class Archive>
-    void serialize(Archive& ar, const unsigned int version) const {
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version) const
+    {
         ar << ELEM_SEPARATOR;
-        DBT_SERIALIZATION_NVP(ar, production_note);
+        DBT_SERIALIZATION_NVP(ar, count_movie_title_1a);
         ar << ELEM_SEPARATOR;
-        DBT_SERIALIZATION_NVP(ar, movie_title);
+        DBT_SERIALIZATION_NVP(ar, count_movie_title_1b);
         ar << ELEM_SEPARATOR;
-        DBT_SERIALIZATION_NVP(ar, movie_year);
+        DBT_SERIALIZATION_NVP(ar, count_movie_title_1c);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, count_movie_title_1d);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, min_movie_year_1a);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, min_movie_year_1b);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, min_movie_year_1c);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, min_movie_year_1d);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, count_production_note_1a);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, count_production_note_1b);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, count_production_note_1c);
+        ar << ELEM_SEPARATOR;
+        DBT_SERIALIZATION_NVP(ar, count_production_note_1d);
     }
 };
 
-RingJobs1 operator*(long int alpha, const RingJobs1 &r) {
-    return RingJobs1(r.production_note, r.movie_title, r.movie_year);
-}
-
-Jobs1MovieCompaniesRing operator*(long int alpha, const Jobs1MovieCompaniesRing &r) {
-    return Jobs1MovieCompaniesRing(r.production_note);
-}
-
-Jobs1TitleRing operator*(long int alpha, const Jobs1TitleRing &r) {
-    return Jobs1TitleRing(r.movie_title, r.movie_year);
-}
-
-Jobs1TitleRing Ulifttitles(int movie_year, const STRING_TYPE& title) {
-    return Jobs1TitleRing(title, movie_year);
-}
-
-Jobs1MovieCompaniesRing Uliftmoviecompanies(const STRING_TYPE& production_note) {
-    return Jobs1MovieCompaniesRing(production_note); 
-}
-
-// define it outside the classes
-RingJobs1 operator*(const Jobs1MovieCompaniesRing &lhs, const Jobs1TitleRing &rhs) {
+RingJobs1 operator*(long int alpha, const RingJobs1 &r)
+{
     return RingJobs1(
-        lhs.production_note,
-        rhs.movie_title,
-        rhs.movie_year
-    );
+        alpha * r.count_movie_title_1a,
+        alpha * r.count_movie_title_1b,
+        alpha * r.count_movie_title_1c,
+        alpha * r.count_movie_title_1d,
+
+        r.min_movie_year_1a,
+        r.min_movie_year_1b,
+        r.min_movie_year_1c,
+        r.min_movie_year_1d,
+
+        alpha * r.count_production_note_1a,
+        alpha * r.count_production_note_1b,
+        alpha * r.count_production_note_1c,
+        alpha * r.count_production_note_1d);
 }
 
-// define it outside the classes
-RingJobs1 operator*(const Jobs1TitleRing &lhs, const Jobs1MovieCompaniesRing &rhs) {
+// explicit RingJobs1() : count_movie_title_1a(0), count_movie_title_1b(0), count_movie_title_1c(0), count_movie_title_1d(0), min_movie_year_1a(std::numeric_limits<int>::max()), min_movie_year_1b(std::numeric_limits<int>::max()), min_movie_year_1c(std::numeric_limits<int>::max()), min_movie_year_1d(std::numeric_limits<int>::max()), count_production_note_1a(0), count_production_note_1b(0), count_production_note_1c(0), count_production_note_1d(0) {}
+RingJobs1 Ulifttitles(int movie_year)
+{
+    bool cond_1a = true; // 1a has no condition on movie_year
+    bool cond_1b = movie_year >= 2005 && movie_year <= 2010;
+    bool cond_1c = movie_year > 2010;
+    bool cond_1d = movie_year > 2000;
+
+    int movie_year_prime = movie_year == -1 ? std::numeric_limits<int>::max() : movie_year;
+
     return RingJobs1(
-        rhs.production_note,
-        lhs.movie_title,
-        lhs.movie_year
-    );
+        cond_1a ? 1 : 0,
+        cond_1b ? 1 : 0,
+        cond_1c ? 1 : 0,
+        cond_1d ? 1 : 0,
+        cond_1a ? movie_year_prime : std::numeric_limits<int>::max(),
+        cond_1b ? movie_year_prime : std::numeric_limits<int>::max(),
+        cond_1c ? movie_year_prime : std::numeric_limits<int>::max(),
+        cond_1d ? movie_year_prime : std::numeric_limits<int>::max(),
+        cond_1a ? 1 : 0,
+        cond_1b ? 1 : 0,
+        cond_1c ? 1 : 0,
+        cond_1d ? 1 : 0);
 }
 
+RingJobs1 Uliftmoviecompanies(const STRING_TYPE &production_note)
+{
+    bool is_null = production_note == "-1";
+
+    bool cond_1 = !is_null && production_note.find("(as Metro-Goldwyn-Mayer Pictures)") == std::string::npos;
+    bool cond_2 = !is_null && production_note.find("(co-production)") != std::string::npos;
+    bool cond_3 = !is_null && production_note.find("(presents)") != std::string::npos;
+
+    bool cond_1a = cond_1 && (cond_2 || cond_3);
+    bool cond_1b = cond_1;
+    bool cond_1c = cond_1 && cond_2;
+    bool cond_1d = cond_1; 
+
+    return RingJobs1(
+        cond_1a ? 1 : 0,
+        cond_1b ? 1 : 0,
+        cond_1c ? 1 : 0,
+        cond_1d ? 1 : 0,
+
+        cond_1a ? std::numeric_limits<int>::max() : -1,
+        cond_1b ? std::numeric_limits<int>::max() : -1,
+        cond_1c ? std::numeric_limits<int>::max() : -1,
+        cond_1d ? std::numeric_limits<int>::max() : -1,
+
+        cond_1a ? 1 : 0,
+        cond_1b ? 1 : 0,
+        cond_1c ? 1 : 0,
+        cond_1d ? 1 : 0);
+
+
+}
 
 #endif /* RINGJOBS1_HPP */

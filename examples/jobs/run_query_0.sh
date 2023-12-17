@@ -30,8 +30,8 @@ do
     output_file="jobs/output/jobs-${query}-${method}-${dataset}_BATCH_1000.txt"
 
     # FIXME: do not compile sql to m3 for now
-    # echo ../bin/run_frontend.sh --batch -o "$m3_file" $sql_file
-    # ../bin/run_frontend.sh --batch -o "$m3_file" $sql_file
+    echo ../bin/run_frontend.sh --batch -o "$m3_file" $sql_file
+    ../bin/run_frontend.sh --batch -o "$m3_file" $sql_file
 
     echo ../bin/run_backend.sh --batch -o "$backend_hpp" "$m3_file"
     ../bin/run_backend.sh --batch -o "$backend_hpp" "$m3_file"
